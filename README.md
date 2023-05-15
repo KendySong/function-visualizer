@@ -1,2 +1,2 @@
-# function-visualizer
-3D math function visualizer with OpenGL
+# complex-visualizer
+Complex function interpreter and visualizer
