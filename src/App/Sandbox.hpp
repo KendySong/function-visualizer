@@ -5,7 +5,6 @@
 
 #include "../Graphics/Shader.hpp"
 #include "../Graphics/Camera.hpp"
-#include "../Graphics/DiffuseLight.hpp"
 
 class Sandbox
 {

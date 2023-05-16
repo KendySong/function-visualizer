@@ -1,7 +1,9 @@
 #version 450 core
-out vec4 color;
+in vec3 g_color;
+
+out vec4 o_color;
 
 void main()
 {
-    color = vec4(0, 1, 0, 1);
+    o_color = vec4(g_color, 1);
 }

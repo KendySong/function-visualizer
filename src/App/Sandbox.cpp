@@ -6,67 +6,29 @@
 
 #include <glad/glad.h>
 
-#include "Sandbox.hpp"
 #include "../Config.hpp"
-#include "../Graphics/Texture.hpp"
+#include "../Graphics/Vertex.hpp"
 #include "Application.hpp"
+#include "Sandbox.hpp"
 
 Sandbox::Sandbox()
 {
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-
-
-    float vertices[]
+    m_shader = Shader("../shaders/vertex.glsl", "../shaders/fragment.glsl");
+    glUseProgram(m_shader.getProgram());
+   
+    Vertex vertices[]
     {
-        -0.5f, -0.5f, -0.5f,   
-         0.5f, -0.5f, -0.5f,  
-         0.5f,  0.5f, -0.5f,  
-         0.5f,  0.5f, -0.5f,  
-        -0.5f,  0.5f, -0.5f,
-        -0.5f, -0.5f, -0.5f,  
-
-        -0.5f, -0.5f,  0.5f,  
-         0.5f, -0.5f,  0.5f,  
-         0.5f,  0.5f,  0.5f,  
-         0.5f,  0.5f,  0.5f,  
-        -0.5f,  0.5f,  0.5f,
-        -0.5f, -0.5f,  0.5f,  
-
-        -0.5f,  0.5f,  0.5f,  
-        -0.5f,  0.5f, -0.5f,  
-        -0.5f, -0.5f, -0.5f,
-        -0.5f, -0.5f, -0.5f,
-        -0.5f, -0.5f,  0.5f,  
-        -0.5f,  0.5f,  0.5f,  
-
-         0.5f,  0.5f,  0.5f,  
-         0.5f,  0.5f, -0.5f,  
-         0.5f, -0.5f, -0.5f,
-         0.5f, -0.5f, -0.5f,
-         0.5f, -0.5f,  0.5f,  
-         0.5f,  0.5f,  0.5f,  
-
-        -0.5f, -0.5f, -0.5f,
-         0.5f, -0.5f, -0.5f,  
-         0.5f, -0.5f,  0.5f,  
-         0.5f, -0.5f,  0.5f,  
-        -0.5f, -0.5f,  0.5f,  
-        -0.5f, -0.5f, -0.5f,
-
-        -0.5f,  0.5f, -0.5f,
-         0.5f,  0.5f, -0.5f,  
-         0.5f,  0.5f,  0.5f,  
-         0.5f,  0.5f,  0.5f,  
-        -0.5f,  0.5f,  0.5f,  
-        -0.5f,  0.5f, -0.5f,
+        {{ -0.5, 0,  0.5 }, {0, 1, 0}},
+        {{ -0.5, 0, -0.5 }, {0, 1, 0}},
+        {{  0.5, 0,  0.5 }, {0, 1, 0}},
+        {{  0.5, 0, -0.5 }, {0, 1, 0}},
+        {{ -0.5, 0, -0.5 }, {0, 1, 0}},
+        {{  0.5, 0,  0.5 }, {0, 1, 0}},
     };
 
-    unsigned int vao = 0;
-    unsigned int vbo = 0;
-   
-    m_shader = Shader("../shaders/vertex.glsl", "../shaders/fragment.glsl");
-    glUseProgram(m_shader.getProgram());  
-
+    std::uint32_t vao = 0;
+    std::uint32_t vbo = 0;
     glGenVertexArrays(1, &vao);
     glBindVertexArray(vao);
 
@@ -75,13 +37,16 @@ Sandbox::Sandbox()
     glBufferData(GL_ARRAY_BUFFER, sizeof vertices, vertices, GL_STATIC_DRAW);
 
     glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 3, GL_FLOAT, false, 3 * sizeof(float), (void*)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, false, 2 * sizeof(glm::vec3), (void*)0);
+
+    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(1, 3, GL_FLOAT, false, 2 * sizeof(glm::vec3), (void*)(sizeof(glm::vec3)));
 
     m_transform = glm::mat4x4(1.0f);
     m_position = glm::vec3(0, 0, 0);
     m_camera = Camera(2);
     
-    m_projection = glm::perspective(glm::radians(90.0f), (float)WIN_WIDTH / (float)WIN_HEIGHT, 0.001f, 100.0f);
+    m_projection = glm::perspective(glm::radians(90.0f), (float)WIN_WIDTH / (float)WIN_HEIGHT, 0.001f, 10000.0f);
     std::uint32_t locView = glGetUniformLocation(m_shader.getProgram(), "view");
     std::uint32_t locProjection = glGetUniformLocation(m_shader.getProgram(), "projection");
     glUniformMatrix4fv(locView, 1, false, glm::value_ptr(m_camera.getView()));
@@ -98,7 +63,7 @@ void Sandbox::update(float deltaTime)
     std::uint32_t locView = glGetUniformLocation(m_shader.getProgram(), "view");
     glUniformMatrix4fv(locView, 1, false, glm::value_ptr(m_camera.getView()));
 
-    //Transform cube
+    //Transform model
     m_transform = glm::mat4x4(1.0f);
     m_transform = glm::translate(m_transform, m_position);
     std::uint32_t locTransform = glGetUniformLocation(m_shader.getProgram(), "transform");
@@ -108,4 +73,24 @@ void Sandbox::update(float deltaTime)
 void Sandbox::render()
 {
     glDrawArrays(GL_TRIANGLES, 0, 36);
+
+    /*
+    ImGui::BeginMainMenuBar();
+    if (ImGui::BeginMenu("File"))
+    {
+        ImGui::MenuItem("Load");
+        ImGui::MenuItem("Save");
+        ImGui::EndMenu();
+    }
+    ImGui::EndMainMenuBar();
+
+    ImGui::DockSpaceOverViewport();
+    ImGui::Begin("Functions");
+
+    ImGui::End();
+
+    ImGui::Begin("Render");
+
+    ImGui::End();
+    */
 }
