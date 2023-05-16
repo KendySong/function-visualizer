@@ -8,7 +8,14 @@ project "function-visualizer"
     language "C++"
     location "build"
 
-    files { "src/**.cpp", "src/**.hpp", "src/**.h", "libraries/include/ImGui/**.cpp", "shaders/**", "libraries/lib/glad.c" }
+    files { 
+        "src/**.cpp", 
+        "src/**.hpp", 
+        "src/**.h", 
+        "libraries/include/ImGui/**.cpp", 
+        "shaders/**", 
+        "libraries/lib/glad.c"
+    }
 
     includedirs "libraries/*"
     libdirs "libraries/lib"

@@ -42,13 +42,13 @@ Application::Application()
 	}
 
 	Log::instance()->log("[INFO] OpenGL version : " + versionName + "\n", GREEN);
-	Log::instance()->log("[INFO] GPU : " + gpuName + "\n", GREEN);
+	Log::instance()->log("[INFO] GPU : " + gpuName, GREEN);
 #endif
 
+	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
 	ImGui_ImplGlfw_InitForOpenGL(p_window, true);
 	ImGui_ImplOpenGL3_Init("#version 450");
-	ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 	p_sandbox = new Sandbox();
 }
 
