@@ -17,8 +17,7 @@ Application::Application()
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	glfwMakeContextCurrent(p_window);
 
-	GLFWmonitor* monitor = glfwGetPrimaryMonitor();
-	const GLFWvidmode* videoMode = glfwGetVideoMode(monitor);
+	const GLFWvidmode* videoMode = glfwGetVideoMode(glfwGetPrimaryMonitor());
 	glfwSetWindowPos(p_window, (videoMode->width / 2) - WIN_WIDTH / 2, (videoMode->height / 2) - WIN_HEIGHT / 2);
 	
 	gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
@@ -43,7 +42,7 @@ Application::Application()
 	}
 
 	Log::instance()->log("[INFO] OpenGL version : " + versionName + "\n", GREEN);
-	Log::instance()->log("[INFO] GPU : " + gpuName, GREEN);
+	Log::instance()->log("[INFO] GPU : " + gpuName + "\n", GREEN);
 #endif
 
 	ImGui::CreateContext();

@@ -1,17 +1,17 @@
 #pragma once
 #include <string>
 
-class Shader 
+class Shader
 {
-public :
+public:
 	Shader() = default;
 	Shader(const char* vertexPath, const char* fragmentPath);
 
-	unsigned int getShaderID() noexcept;
+	std::uint32_t getProgram() noexcept;
 
-private :
-	bool checkCompileStatus(unsigned int objectID, std::string name);
+private:
+	bool checkCompileStatus(std::uint32_t objectID, std::string name);
 	std::pair<std::string, bool> loadShader(const char* shaderPath);
 
-	unsigned int m_shaderID;
+	std::uint32_t m_shaderID;
 };

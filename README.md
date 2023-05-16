@@ -1,2 +1,2 @@
-# complex-visualizer
-Complex function interpreter and visualizer
+# function-visualizer
+3D function interpreter and visualizer
