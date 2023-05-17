@@ -6,17 +6,31 @@
 
 #include <glad/glad.h>
 
+#include "Sandbox.hpp"
 #include "../Config.hpp"
 #include "../Graphics/Vertex.hpp"
 #include "Application.hpp"
-#include "Sandbox.hpp"
 
-Sandbox::Sandbox()
+Sandbox::Sandbox(GLFWwindow* window)
 {
-    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    p_window = window;
     m_shader = Shader("../shaders/vertex.glsl", "../shaders/fragment.glsl");
+
     glUseProgram(m_shader.getProgram());
-   
+    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
+    Vertex vertices[]
+    {
+        {{ 0.5, 0.5,  0.5 }, {0, 1, 0}},
+        {{ -0.5, 0.5, 0.5 }, {0, 1, 0}},
+        {{  0.5, 0,  0.5 }, {0, 1, 0}},
+
+        {{  0.5, 0, -0.5 }, {0, 1, 0}},
+        {{ -0.5, 0.5, -0.5 }, {0, 1, 0}},
+        {{  0.5, 0.5,  0.5 }, {0, 1, 0}},
+    };
+
+    /*
     Vertex vertices[]
     {
         {{ -0.5, 0,  0.5 }, {0, 1, 0}},
@@ -26,6 +40,7 @@ Sandbox::Sandbox()
         {{ -0.5, 0, -0.5 }, {0, 1, 0}},
         {{  0.5, 0,  0.5 }, {0, 1, 0}},
     };
+    */
 
     std::uint32_t vao = 0;
     std::uint32_t vbo = 0;
@@ -42,36 +57,19 @@ Sandbox::Sandbox()
     glEnableVertexAttribArray(1);
     glVertexAttribPointer(1, 3, GL_FLOAT, false, 2 * sizeof(glm::vec3), (void*)(sizeof(glm::vec3)));
 
+    float aspectRatio = WIN_WIDTH / WIN_HEIGHT;
+    glm::mat4x4 projection = glm::perspective(glm::radians(90.0f), aspectRatio, 0.1f, 99999999.0f);
+    m_shader.setMat4x4("projection", projection);
 
-
-    m_transform = glm::mat4x4(1.0f);
-    m_position = glm::vec3(0, 0, 0);
-    m_camera = OrbitCamera(2);
-    
-    m_projection = glm::perspective(glm::radians(90.0f), (float)WIN_WIDTH / (float)WIN_HEIGHT, 0.001f, 10000.0f);
-    std::uint32_t locView = glGetUniformLocation(m_shader.getProgram(), "view");
-    std::uint32_t locProjection = glGetUniformLocation(m_shader.getProgram(), "projection");
-
-    glUniformMatrix4fv(locView, 1, false, glm::value_ptr(m_camera.getView()));
-    glUniformMatrix4fv(locProjection, 1, false, glm::value_ptr(m_projection));
+    m_camera = OrbitCamera(window, glm::vec3(0, 0, 0), 2);
 }
 
 void Sandbox::update(float deltaTime)
 {
-    //Manage camera
     double x, y;
-    m_camera.processMovements(deltaTime); 
-    glfwGetCursorPos(Application::instance()->getWindow(), &x, &y);
-
-    m_camera.rotate(glm::vec2(x, y));
-    std::uint32_t locView = glGetUniformLocation(m_shader.getProgram(), "view");
-    glUniformMatrix4fv(locView, 1, false, glm::value_ptr(m_camera.getView()));
-
-    //Transform model
-    m_transform = glm::mat4x4(1.0f);
-    m_transform = glm::translate(m_transform, m_position);
-    std::uint32_t locTransform = glGetUniformLocation(m_shader.getProgram(), "transform");
-    glUniformMatrix4fv(locTransform, 1, GL_FALSE, glm::value_ptr(m_transform));
+    glfwGetCursorPos(p_window, &x, &y);
+    m_camera.processMovements(deltaTime, glm::vec2(x, y));
+    m_shader.setMat4x4("view", m_camera.view);
 }
 
 void Sandbox::render()

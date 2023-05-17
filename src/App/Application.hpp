@@ -15,11 +15,9 @@ public:
 
 	int run();
 
-	GLFWwindow* getWindow() const noexcept;
-
 private :
 	static Application* s_application;
 	GLFWwindow* p_window;
 	Timer m_deltaTimer;
-	Sandbox* p_sandbox;
+	Sandbox m_sandbox;
 };

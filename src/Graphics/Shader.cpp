@@ -4,13 +4,14 @@
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#include <glm/gtc/type_ptr.hpp>
 
 #include "Shader.hpp"
 #include "../App/Log.hpp"
 
 Shader::Shader(const char* vertexPath, const char* fragmentPath)
 {
-	m_shaderID = 0;
+	m_program = 0;
 	std::pair<std::string, bool> vertexSource = this->loadShader(vertexPath);
 	std::pair<std::string, bool> fragmentSource = this->loadShader(fragmentPath);
 	const char* vSrc = vertexSource.first.c_str();
@@ -33,21 +34,21 @@ Shader::Shader(const char* vertexPath, const char* fragmentPath)
 		return;
 	}
 
-	m_shaderID = glCreateProgram();
-	glAttachShader(m_shaderID, vertexShader);
-	glAttachShader(m_shaderID, fragmentShader);
-	glLinkProgram(m_shaderID);
+	m_program = glCreateProgram();
+	glAttachShader(m_program, vertexShader);
+	glAttachShader(m_program, fragmentShader);
+	glLinkProgram(m_program);
 
 	int linkStatus = false;
-	glGetProgramiv(m_shaderID, GL_LINK_STATUS, &linkStatus);
+	glGetProgramiv(m_program, GL_LINK_STATUS, &linkStatus);
 	if (!linkStatus)
 	{
 		int length = 0;
 		std::string errorMsg = "";
 		std::vector<char> errorMessage(length);
 
-		glGetProgramiv(m_shaderID, GL_INFO_LOG_LENGTH, &length);
-		glGetProgramInfoLog(m_shaderID, length, &length, errorMessage.data());
+		glGetProgramiv(m_program, GL_INFO_LOG_LENGTH, &length);
+		glGetProgramInfoLog(m_program, length, &length, errorMessage.data());
 		for (size_t i = 0; i < errorMessage.size(); i++)
 		{
 			errorMsg += errorMessage[i];
@@ -60,15 +61,20 @@ Shader::Shader(const char* vertexPath, const char* fragmentPath)
 		return;
 	}
 
-	glDetachShader(m_shaderID, vertexShader);
-	glDetachShader(m_shaderID, fragmentShader);
+	glDetachShader(m_program, vertexShader);
+	glDetachShader(m_program, fragmentShader);
 	glDeleteShader(vertexShader);
 	glDeleteShader(fragmentShader);
 }
 
+void Shader::setMat4x4(const char* name, const glm::mat4x4& matrix)
+{
+	glUniformMatrix4fv(glGetUniformLocation(this->m_program, name), 1, false, glm::value_ptr(matrix));
+}
+
 std::uint32_t Shader::getProgram() noexcept
 {
-	return m_shaderID;
+	return m_program;
 }
 
 bool Shader::checkCompileStatus(std::uint32_t shaderID, std::string name)

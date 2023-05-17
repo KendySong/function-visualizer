@@ -9,24 +9,17 @@ class OrbitCamera
 {
 public :
     OrbitCamera() = default;
-    OrbitCamera(float speed);
+    OrbitCamera(GLFWwindow* window, glm::vec3 center, float distance);
     
-    void processMovements(float deltaTime);
-    void rotate(glm::vec2 mousePos);
-
-    glm::mat4x4& getView() noexcept;
-    glm::vec3& getPosition() noexcept;
-
+    void processMovements(float deltaTime, glm::vec2 mouse);
+    glm::mat4x4 view;
+    
 private :
-    bool m_canRotate;
-    float m_speed;
-    glm::vec3 m_direction;
+    GLFWwindow* p_window;
     glm::vec3 m_position;
+    glm::vec3 m_center;
     glm::vec2 m_rotation;
-
+    float m_distance;
     glm::vec3 m_up;
-    glm::mat4x4 m_view;
-
-    bool m_firstMove;
-    glm::vec2 m_lastMouse;   
+    glm::vec2 m_last;
 };

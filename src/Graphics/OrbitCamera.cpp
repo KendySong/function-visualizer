@@ -2,107 +2,33 @@
 #include "../App/Application.hpp"
 #include "../Config.hpp"
 
-OrbitCamera::OrbitCamera(float speed)
-{
-	m_firstMove = true;
-	m_canRotate = false;
-	m_lastMouse = glm::vec2(0);
-	m_rotation = glm::vec2(-90, 0);
+#include <iostream>
 
-	m_speed = speed;
-	m_view = glm::mat4x4(1.0f);
-	m_position = glm::vec3(0);
+OrbitCamera::OrbitCamera(GLFWwindow* window, glm::vec3 center, float distance)
+{
+	p_window = window;
 	m_up = glm::vec3(0, 1, 0);
-	m_direction = glm::vec3(0, 0, -1);
+	m_center = center;
+	m_distance = distance;
 }
 
-void OrbitCamera::processMovements(float deltaTime)
+void OrbitCamera::processMovements(float deltaTime, glm::vec2 mouse)
 {
-	GLFWwindow* p_window = Application::instance()->getWindow();
-	if (glfwGetKey(p_window, GLFW_KEY_W))
-	{
-		m_position -= m_direction * deltaTime * m_speed;
-	}
-
-	if (glfwGetKey(p_window, GLFW_KEY_A))
-	{
-		m_position += glm::normalize(glm::cross(m_direction, m_up)) * deltaTime * m_speed;
-	}
-
-	if (glfwGetKey(p_window, GLFW_KEY_S))
-	{
-		m_position += m_direction * deltaTime * m_speed;
-	}
-
-	if (glfwGetKey(p_window, GLFW_KEY_D))
-	{
-		m_position -= glm::normalize(glm::cross(m_direction, m_up)) * deltaTime * m_speed;
-	}
-
-	if (glfwGetKey(p_window, GLFW_KEY_SPACE))
-	{
-		m_position.y += deltaTime * m_speed;
-	}
-
-	if (glfwGetKey(p_window, GLFW_KEY_LEFT_SHIFT))
-	{
-		m_position.y -= deltaTime * m_speed;
-	}
-
 	if (glfwGetMouseButton(p_window, GLFW_MOUSE_BUTTON_RIGHT))
 	{
-		m_canRotate = true;
 		glfwSetInputMode(p_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-	}
-	else 
-	{
-		double x, y;
-		glfwGetCursorPos(p_window, &x, &y);
-		m_lastMouse.x = x;
-		m_lastMouse.y = y;
+		glm::vec2 offset = mouse - m_last;
+		offset *= SENSITIVITY;
+		m_rotation += offset;
 
-		m_canRotate = false;
+		m_position.x = sin(m_rotation.x);
+		m_position.z = cos(m_rotation.x);
+
+		m_last = mouse;
+		this->view = glm::lookAt(m_position * m_distance, m_center, m_up);		
+	}
+	else
+	{
 		glfwSetInputMode(p_window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 	}
-
-	m_view = glm::lookAt(m_position, m_position - m_direction, m_up);
-}
-
-void OrbitCamera::rotate(glm::vec2 mousePos)
-{
-	if (!m_canRotate)
-	{
-		return;
-	}
-
-	glm::vec2 offset = mousePos - m_lastMouse;
-	offset *= SENSITIVITY;	
-	m_lastMouse = mousePos;
-	m_rotation += offset;
-
-	if (m_rotation.y > 89.9)
-	{
-		m_rotation.y = 89.9;
-	}
-
-	if (m_rotation.y < -89.9)
-	{
-		m_rotation.y = -89.9;
-	}
-
-	glm::vec2 radianRotation(glm::radians(m_rotation.x), glm::radians(m_rotation.y));
-	m_direction.x = cos(radianRotation.x) * cos(radianRotation.y);
-	m_direction.y = sin(radianRotation.y);
-	m_direction.z = sin(radianRotation.x) * cos(radianRotation.y);
-	m_direction = glm::normalize(m_direction);
-}
-
-glm::mat4x4& OrbitCamera::getView() noexcept
-{
-	return m_view;
-}
-
-glm::vec3& OrbitCamera::getPosition() noexcept
-{
-	return m_position;
 }

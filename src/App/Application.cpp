@@ -50,7 +50,7 @@ Application::Application()
 	ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 	ImGui_ImplGlfw_InitForOpenGL(p_window, true);
 	ImGui_ImplOpenGL3_Init("#version 450");
-	p_sandbox = new Sandbox();
+	m_sandbox = Sandbox(p_window);
 }
 
 Application* Application::instance() noexcept
@@ -71,14 +71,14 @@ int Application::run()
 		float deltaTime = m_deltaTimer.getElapsedTime();	
 		m_deltaTimer.restart();
 
-		p_sandbox->update(deltaTime);
+		m_sandbox.update(deltaTime);
 
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();	
 
-		p_sandbox->render();
+		m_sandbox.render();
 
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
@@ -86,9 +86,4 @@ int Application::run()
 	}
 
 	return 0;
-}
-
-GLFWwindow* Application::getWindow() const noexcept
-{
-	return p_window;
 }
