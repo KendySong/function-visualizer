@@ -42,13 +42,16 @@ Sandbox::Sandbox()
     glEnableVertexAttribArray(1);
     glVertexAttribPointer(1, 3, GL_FLOAT, false, 2 * sizeof(glm::vec3), (void*)(sizeof(glm::vec3)));
 
+
+
     m_transform = glm::mat4x4(1.0f);
     m_position = glm::vec3(0, 0, 0);
-    m_camera = Camera(2);
+    m_camera = OrbitCamera(2);
     
     m_projection = glm::perspective(glm::radians(90.0f), (float)WIN_WIDTH / (float)WIN_HEIGHT, 0.001f, 10000.0f);
     std::uint32_t locView = glGetUniformLocation(m_shader.getProgram(), "view");
     std::uint32_t locProjection = glGetUniformLocation(m_shader.getProgram(), "projection");
+
     glUniformMatrix4fv(locView, 1, false, glm::value_ptr(m_camera.getView()));
     glUniformMatrix4fv(locProjection, 1, false, glm::value_ptr(m_projection));
 }
@@ -59,6 +62,7 @@ void Sandbox::update(float deltaTime)
     double x, y;
     m_camera.processMovements(deltaTime); 
     glfwGetCursorPos(Application::instance()->getWindow(), &x, &y);
+
     m_camera.rotate(glm::vec2(x, y));
     std::uint32_t locView = glGetUniformLocation(m_shader.getProgram(), "view");
     glUniformMatrix4fv(locView, 1, false, glm::value_ptr(m_camera.getView()));
@@ -72,7 +76,7 @@ void Sandbox::update(float deltaTime)
 
 void Sandbox::render()
 {
-    glDrawArrays(GL_TRIANGLES, 0, 36);
+    glDrawArrays(GL_TRIANGLES, 0, 6);
 
     /*
     ImGui::BeginMainMenuBar();

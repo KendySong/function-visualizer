@@ -1,8 +1,8 @@
-#include "Camera.hpp"
+#include "OrbitCamera.hpp"
 #include "../App/Application.hpp"
 #include "../Config.hpp"
 
-Camera::Camera(float speed)
+OrbitCamera::OrbitCamera(float speed)
 {
 	m_firstMove = true;
 	m_canRotate = false;
@@ -16,7 +16,7 @@ Camera::Camera(float speed)
 	m_direction = glm::vec3(0, 0, -1);
 }
 
-void Camera::processMovements(float deltaTime)
+void OrbitCamera::processMovements(float deltaTime)
 {
 	GLFWwindow* p_window = Application::instance()->getWindow();
 	if (glfwGetKey(p_window, GLFW_KEY_W))
@@ -68,7 +68,7 @@ void Camera::processMovements(float deltaTime)
 	m_view = glm::lookAt(m_position, m_position - m_direction, m_up);
 }
 
-void Camera::rotate(glm::vec2 mousePos)
+void OrbitCamera::rotate(glm::vec2 mousePos)
 {
 	if (!m_canRotate)
 	{
@@ -97,12 +97,12 @@ void Camera::rotate(glm::vec2 mousePos)
 	m_direction = glm::normalize(m_direction);
 }
 
-glm::mat4x4& Camera::getView() noexcept
+glm::mat4x4& OrbitCamera::getView() noexcept
 {
 	return m_view;
 }
 
-glm::vec3& Camera::getPosition() noexcept
+glm::vec3& OrbitCamera::getPosition() noexcept
 {
 	return m_position;
 }

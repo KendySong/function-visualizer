@@ -4,7 +4,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 #include "../Graphics/Shader.hpp"
-#include "../Graphics/Camera.hpp"
+#include "../Graphics/OrbitCamera.hpp"
 
 class Sandbox
 {
@@ -16,10 +16,10 @@ public :
     
 private :
     Shader m_shader;
+    OrbitCamera m_camera;
+    glm::mat4x4 m_projection;
 
     glm::vec3 m_position;
-    glm::mat4x4 m_transform;
-
-    Camera m_camera;
-    glm::mat4x4 m_projection;
+    glm::mat4x4 m_transform; 
+    
 };

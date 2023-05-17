@@ -5,11 +5,11 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
-class Camera
+class OrbitCamera
 {
 public :
-    Camera() = default;
-    Camera(float speed);
+    OrbitCamera() = default;
+    OrbitCamera(float speed);
     
     void processMovements(float deltaTime);
     void rotate(glm::vec2 mousePos);
