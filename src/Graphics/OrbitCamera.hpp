@@ -13,12 +13,13 @@ public :
     
     void processMovements(float deltaTime, glm::vec2 mouse);
     glm::mat4x4 view;
-    
+
 private :
     GLFWwindow* p_window;
     glm::vec3 m_position;
     glm::vec3 m_center;
     glm::vec2 m_rotation;
+
     float m_distance;
     glm::vec3 m_up;
     glm::vec2 m_last;
