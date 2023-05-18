@@ -12,9 +12,17 @@ public :
     OrbitCamera(GLFWwindow* window, glm::vec3 center, float distance);
     
     void processMovements(float deltaTime, glm::vec2 mouse);
+    void scroll(double offset);
+
+private :
+    void rotate();
+
+public :
     glm::mat4x4 view;
 
 private :
+    
+
     GLFWwindow* p_window;
     glm::vec3 m_position;
     glm::vec3 m_center;

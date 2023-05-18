@@ -20,6 +20,7 @@ Application::Application()
 	const GLFWvidmode* videoMode = glfwGetVideoMode(glfwGetPrimaryMonitor());
 	glfwSetWindowPos(p_window, (videoMode->width / 2) - WIN_WIDTH / 2, (videoMode->height / 2) - WIN_HEIGHT / 2);
 	
+	
 	gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
 	glEnable(GL_DEPTH_TEST);
 	glViewport(0, 0, WIN_WIDTH, WIN_HEIGHT);

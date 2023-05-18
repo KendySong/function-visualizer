@@ -1,5 +1,3 @@
-#include <vector>
-
 #include <ImGui/imgui.h>
 #include <ImGui/imgui_impl_glfw.h>
 #include <ImGui/imgui_impl_opengl3.h>
@@ -15,39 +13,30 @@ Sandbox::Sandbox(GLFWwindow* window)
 {
     p_window = window;
     m_shader = Shader("../shaders/vertex.glsl", "../shaders/fragment.glsl");
-
     glUseProgram(m_shader.getProgram());
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
-    Vertex vertices[]
-    {
-        {{ -0.5, 0,  0.5 }, {0, 1, 0}},
-        {{ -0.5, 0, -0.5 }, {0, 1, 0}},
-        {{  0.5, 0,  0.5 }, {0, 1, 0}},
-        {{  0.5, 0, -0.5 }, {0, 1, 0}},
-        {{ -0.5, 0, -0.5 }, {0, 1, 0}},
-        {{  0.5, 0,  0.5 }, {0, 1, 0}},
-    };
+    glGenFramebuffers(1, &m_fbo);
+    glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
 
-    std::uint32_t vao = 0;
-    std::uint32_t vbo = 0;
-    glGenVertexArrays(1, &vao);
-    glBindVertexArray(vao);
+    glGenTextures(1, &m_frameTexture);
+    glBindTexture(GL_TEXTURE_2D, m_frameTexture);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, WIN_WIDTH, WIN_HEIGHT, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_frameTexture, 0);
 
-    glGenBuffers(1, &vbo);
-    glBindBuffer(GL_ARRAY_BUFFER, vbo);
-    glBufferData(GL_ARRAY_BUFFER, sizeof vertices, vertices, GL_STATIC_DRAW);
+    glGenRenderbuffers(1, &m_rbo);
+    glBindRenderbuffer(GL_RENDERBUFFER, m_rbo);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, WIN_WIDTH, WIN_HEIGHT);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, m_rbo);
 
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 3, GL_FLOAT, false, 2 * sizeof(glm::vec3), (void*)0);
-
-    glEnableVertexAttribArray(1);
-    glVertexAttribPointer(1, 3, GL_FLOAT, false, 2 * sizeof(glm::vec3), (void*)(sizeof(glm::vec3)));
-
+    m_plane = Plane(glm::vec2(10, 10));
+    
+    //Set up camera and projection
     float aspectRatio = WIN_WIDTH / WIN_HEIGHT;
-    glm::mat4x4 projection = glm::perspective(glm::radians(90.0f), aspectRatio, 0.1f, 99999999.0f);
+    glm::mat4x4 projection = glm::perspective(glm::radians(90.0f), aspectRatio, 0.1f, 10000.0f);
     m_shader.setMat4x4("projection", projection);
-
     m_camera = OrbitCamera(window, glm::vec3(0, 0, 0), 2);
 }
 
@@ -61,9 +50,11 @@ void Sandbox::update(float deltaTime)
 
 void Sandbox::render()
 {
+    glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glDrawArrays(GL_TRIANGLES, 0, 6);
 
-    /*
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
     ImGui::BeginMainMenuBar();
     if (ImGui::BeginMenu("File"))
     {
@@ -75,11 +66,18 @@ void Sandbox::render()
 
     ImGui::DockSpaceOverViewport();
     ImGui::Begin("Functions");
-
+    
     ImGui::End();
 
-    ImGui::Begin("Render");
-
+    ImGui::Begin("Graphics");
     ImGui::End();
-    */
+
+    ImGui::Begin("Render");  
+    ImVec2 cursorPos = ImGui::GetCursorScreenPos();
+    ImGui::GetWindowDrawList()->AddImage(
+        (ImTextureID)m_frameTexture,
+        ImGui::GetCursorPos(),
+        ImVec2(cursorPos.x + RENDER_WIDTH, cursorPos.y + RENDER_HEIGHT)
+    );
+    ImGui::End();
 }
