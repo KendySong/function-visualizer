@@ -1,4 +1,5 @@
 #define _USE_MATH_DEFINES
+#define HALF_PI M_PI / 2
 #include <cmath>
 
 #include "OrbitCamera.hpp"
@@ -24,18 +25,17 @@ void OrbitCamera::processMovements(float deltaTime, glm::vec2 mouse)
 		glfwSetInputMode(p_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 		m_rotation += (mouse - m_last) * SENSITIVITY;
 
-		if (m_rotation.y >= M_PI / 2)
+		if (m_rotation.y >= HALF_PI)
 		{
-			m_rotation.y = M_PI / 2;
+			m_rotation.y = HALF_PI;
 		}
 
-		if (m_rotation.y <= -M_PI / 2)
+		if (m_rotation.y <= -HALF_PI)
 		{
-			m_rotation.y = -M_PI / 2;
+			m_rotation.y = -HALF_PI;
 		}
 
 		this->rotate();
-		this->view = glm::lookAt(m_position * m_distance, m_center, m_up);
 	}
 	else
 	{
@@ -43,6 +43,7 @@ void OrbitCamera::processMovements(float deltaTime, glm::vec2 mouse)
 	}
 
 	m_last = mouse;
+	this->view = glm::lookAt(m_position * m_distance, m_center, m_up);
 }
 
 void OrbitCamera::rotate()

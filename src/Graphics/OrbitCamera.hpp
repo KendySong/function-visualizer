@@ -19,6 +19,7 @@ private :
 
 public :
     glm::mat4x4 view;
+    float m_distance;
 
 private :
     
@@ -28,7 +29,7 @@ private :
     glm::vec3 m_center;
     glm::vec2 m_rotation;
 
-    float m_distance;
+    
     glm::vec3 m_up;
     glm::vec2 m_last;
 };

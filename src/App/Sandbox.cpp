@@ -31,13 +31,13 @@ Sandbox::Sandbox(GLFWwindow* window)
     glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, WIN_WIDTH, WIN_HEIGHT);
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, m_rbo);
 
-    m_plane = Plane(glm::vec2(10, 10));
+    m_plane = Plane(glm::vec2(10, 10), glm::vec2(10, 10));
     
     //Set up camera and projection
     float aspectRatio = WIN_WIDTH / WIN_HEIGHT;
     glm::mat4x4 projection = glm::perspective(glm::radians(90.0f), aspectRatio, 0.1f, 10000.0f);
     m_shader.setMat4x4("projection", projection);
-    m_camera = OrbitCamera(window, glm::vec3(0, 0, 0), 2);
+    m_camera = OrbitCamera(window, glm::vec3(0, 0, 0), 10);
 }
 
 void Sandbox::update(float deltaTime)
@@ -52,7 +52,7 @@ void Sandbox::render()
 {
     glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    glDrawArrays(GL_TRIANGLES, 0, 6);
+    glDrawElements(GL_TRIANGLES, m_plane.elementSize, GL_UNSIGNED_INT, 0);
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
     ImGui::BeginMainMenuBar();
@@ -70,6 +70,7 @@ void Sandbox::render()
     ImGui::End();
 
     ImGui::Begin("Graphics");
+
     ImGui::End();
 
     ImGui::Begin("Render");  
