@@ -8,7 +8,6 @@
 #include "../Config.hpp"
 #include "../Graphics/Vertex.hpp"
 #include "Application.hpp"
-#include <iostream>
 
 Sandbox::Sandbox(GLFWwindow* window)
 {
@@ -17,8 +16,8 @@ Sandbox::Sandbox(GLFWwindow* window)
     m_framerate = 0;
     m_renderMode = { 
         { "Wireframe", []() {glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); } },
-        { "Fill", []() {glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); } },
-        { "Points", []() {glPolygonMode(GL_FRONT_AND_BACK, GL_POINT); } }
+        { "Fill",      []() {glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); } },
+        { "Points",    []() {glPolygonMode(GL_FRONT_AND_BACK, GL_POINT);} }
     };
     m_currentMode = m_renderMode[0].name;
 
@@ -45,7 +44,10 @@ Sandbox::Sandbox(GLFWwindow* window)
     glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, WIN_WIDTH, WIN_HEIGHT);
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, m_rbo);
 
-    m_plane = Plane(glm::vec2(20, 20), glm::vec2(20, 20));
+    m_plane = Plane(
+        glm::vec2(PLANE_SIZE_X, PLANE_SIZE_Y), 
+        glm::vec2(PLANE_GRID_X, PLANE_GRID_Y)
+    );
     
     //Set up camera and projection
     float aspectRatio = (float)WIN_WIDTH / (float)WIN_HEIGHT;
@@ -72,6 +74,10 @@ void Sandbox::update(float deltaTime)
 
 void Sandbox::render()
 {
+    static char funcBuffer[512] = "";
+    static float planeSize[2] = { PLANE_SIZE_X, PLANE_SIZE_Y };
+    static int planeGrid[2] = { PLANE_GRID_X, PLANE_GRID_Y };
+
     glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glDrawElements(GL_TRIANGLES, m_plane.elementSize, GL_UNSIGNED_INT, 0);
@@ -84,13 +90,18 @@ void Sandbox::render()
     ImGui::DockSpaceOverViewport();
     ImGui::Begin("Functions");
     
-    static char funcBuffer[512] = "";
     ImGui::InputText("Function", funcBuffer, sizeof(funcBuffer));
+    ImGui::DragFloat2("Graph size", &planeSize[0], 0.1);
+    ImGui::DragInt2("Graph grid size", &planeGrid[0], 0.1);
+
     if (ImGui::Button("Apply"))
-    {
+    {    
+        m_plane = Plane(
+            glm::vec2(planeSize[0], planeSize[1]),
+            glm::vec2(planeGrid[0], planeGrid[1])
+        );
         std::string function(funcBuffer);
     }
-
     ImGui::End();
 
     ImGui::Begin("Graphics");

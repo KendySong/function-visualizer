@@ -9,7 +9,8 @@ class Plane
 {
 public :
     Plane() = default;
-    Plane(glm::vec2 worldSize, glm::vec2 boardSize);
+    Plane(glm::vec2 worldSize, glm::vec2 gridSize);
+
     std::uint32_t elementSize;
 
 private :

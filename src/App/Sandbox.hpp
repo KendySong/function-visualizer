@@ -31,8 +31,9 @@ private :
     std::string m_currentMode;
 
     OrbitCamera m_camera;
-    Plane m_plane;
     Shader m_shader;
+    Plane m_plane;
+    glm::vec2 m_planeSize;
 
     std::uint32_t m_fbo;
     std::uint32_t m_rbo;
