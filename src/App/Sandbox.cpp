@@ -8,6 +8,7 @@
 #include "../Config.hpp"
 #include "../Graphics/Vertex.hpp"
 #include "Application.hpp"
+#include <iostream>
 
 Sandbox::Sandbox(GLFWwindow* window)
 {
@@ -18,6 +19,10 @@ Sandbox::Sandbox(GLFWwindow* window)
         { "Points", []() {glPolygonMode(GL_FRONT_AND_BACK, GL_POINT); } }
     };
     m_currentMode = m_renderMode[0].name;
+
+    glEnable(GL_DEPTH_TEST);
+    glViewport(0, 0, WIN_WIDTH, WIN_HEIGHT);
+    glClearColor(0, 0, 0, 1);
 
     m_shader = Shader("../shaders/vertex.glsl", "../shaders/fragment.glsl");
     glUseProgram(m_shader.getProgram());
@@ -53,6 +58,14 @@ void Sandbox::update(float deltaTime)
     glfwGetCursorPos(p_window, &x, &y);
     m_camera.processMovements(deltaTime, glm::vec2(x, y));
     m_shader.setMat4x4("view", m_camera.view);
+
+    m_framerate++;
+    if (m_framerateTimer.getElapsedTime() >= 1)
+    {
+        m_displayFramerate = m_framerate;
+        m_framerateTimer.restart();
+        m_framerate = 0;
+    }
 }
 
 void Sandbox::render()
@@ -63,16 +76,19 @@ void Sandbox::render()
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
     ImGui::BeginMainMenuBar();
-    if (ImGui::BeginMenu("File"))
-    {
-        ImGui::MenuItem("Load");
-        ImGui::MenuItem("Save");
-        ImGui::EndMenu();
-    }
+    ImGui::Text("FPS %d", m_displayFramerate);
     ImGui::EndMainMenuBar();
 
     ImGui::DockSpaceOverViewport();
     ImGui::Begin("Functions");
+    
+    static char funcBuffer[512] = "";
+    ImGui::InputText("Function", funcBuffer, sizeof(funcBuffer));
+    if (ImGui::Button("Apply"))
+    {
+        std::string function(funcBuffer);
+    }
+
     ImGui::End();
 
     ImGui::Begin("Graphics");
@@ -94,7 +110,7 @@ void Sandbox::render()
         ImVec2 cursorPos = ImGui::GetCursorScreenPos();
         ImGui::GetWindowDrawList()->AddImage(
             (ImTextureID)m_frameTexture,
-            ImGui::GetCursorPos(),
+            ImVec2(ImGui::GetCursorPos().x, ImGui::GetCursorPos().y + 15),
             ImVec2(cursorPos.x + RENDER_WIDTH, cursorPos.y + RENDER_HEIGHT)
         );
     ImGui::End();

@@ -7,6 +7,7 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
+#include "Timer.hpp"
 #include "RenderMode.hpp"
 #include "../Graphics/Shader.hpp"
 #include "../Graphics/Plane.hpp"
@@ -22,6 +23,10 @@ public :
     void render();
     
 private :
+    std::uint32_t m_displayFramerate;
+    std::uint32_t m_framerate;
+    Timer m_framerateTimer;
+
     std::vector<RenderMode> m_renderMode;
     std::string m_currentMode;
 
