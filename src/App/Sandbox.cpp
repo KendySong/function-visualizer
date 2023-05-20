@@ -13,6 +13,8 @@
 Sandbox::Sandbox(GLFWwindow* window)
 {
     p_window = window;
+    m_displayFramerate = 0;
+    m_framerate = 0;
     m_renderMode = { 
         { "Wireframe", []() {glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); } },
         { "Fill", []() {glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); } },
@@ -43,10 +45,10 @@ Sandbox::Sandbox(GLFWwindow* window)
     glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, WIN_WIDTH, WIN_HEIGHT);
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, m_rbo);
 
-    m_plane = Plane(glm::vec2(10, 10), glm::vec2(10, 10));
+    m_plane = Plane(glm::vec2(20, 20), glm::vec2(20, 20));
     
     //Set up camera and projection
-    float aspectRatio = WIN_WIDTH / WIN_HEIGHT;
+    float aspectRatio = (float)WIN_WIDTH / (float)WIN_HEIGHT;
     glm::mat4x4 projection = glm::perspective(glm::radians(90.0f), aspectRatio, 0.1f, 10000.0f);
     m_shader.setMat4x4("projection", projection);
     m_camera = OrbitCamera(window, glm::vec3(0, 0, 0), 10);
