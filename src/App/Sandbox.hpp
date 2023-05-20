@@ -1,10 +1,13 @@
 #pragma once
+#include <vector>
+
 #include <ImGui/imgui.h>
 
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
+#include "RenderMode.hpp"
 #include "../Graphics/Shader.hpp"
 #include "../Graphics/Plane.hpp"
 #include "../Graphics/OrbitCamera.hpp"
@@ -19,7 +22,8 @@ public :
     void render();
     
 private :
-
+    std::vector<RenderMode> m_renderMode;
+    std::string m_currentMode;
 
     OrbitCamera m_camera;
     Plane m_plane;

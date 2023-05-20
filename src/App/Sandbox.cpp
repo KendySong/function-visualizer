@@ -12,6 +12,13 @@
 Sandbox::Sandbox(GLFWwindow* window)
 {
     p_window = window;
+    m_renderMode = { 
+        { "Wireframe", []() {glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); } },
+        { "Fill", []() {glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); } },
+        { "Points", []() {glPolygonMode(GL_FRONT_AND_BACK, GL_POINT); } }
+    };
+    m_currentMode = m_renderMode[0].name;
+
     m_shader = Shader("../shaders/vertex.glsl", "../shaders/fragment.glsl");
     glUseProgram(m_shader.getProgram());
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -66,19 +73,29 @@ void Sandbox::render()
 
     ImGui::DockSpaceOverViewport();
     ImGui::Begin("Functions");
-    
     ImGui::End();
 
     ImGui::Begin("Graphics");
-
+        if (ImGui::BeginCombo("Rendering mode", m_currentMode.c_str()))
+        {
+            for (size_t i = 0; i < m_renderMode.size(); i++)
+            {
+                if (ImGui::Selectable(m_renderMode[i].name.c_str(), m_renderMode[i].name == m_currentMode))
+                {
+                    m_currentMode = m_renderMode[i].name;
+                    m_renderMode[i].setRenderMode();
+                }
+            }
+            ImGui::EndCombo();
+        } 
     ImGui::End();
 
     ImGui::Begin("Render");  
-    ImVec2 cursorPos = ImGui::GetCursorScreenPos();
-    ImGui::GetWindowDrawList()->AddImage(
-        (ImTextureID)m_frameTexture,
-        ImGui::GetCursorPos(),
-        ImVec2(cursorPos.x + RENDER_WIDTH, cursorPos.y + RENDER_HEIGHT)
-    );
+        ImVec2 cursorPos = ImGui::GetCursorScreenPos();
+        ImGui::GetWindowDrawList()->AddImage(
+            (ImTextureID)m_frameTexture,
+            ImGui::GetCursorPos(),
+            ImVec2(cursorPos.x + RENDER_WIDTH, cursorPos.y + RENDER_HEIGHT)
+        );
     ImGui::End();
 }
