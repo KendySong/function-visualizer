@@ -2,9 +2,9 @@
 
 #include "Lexer.hpp"
 
-
 Lexer::Lexer(std::string expression)
 {
+	tokens = new std::vector<std::pair<Token, std::string>>();
 	std::string baseExpression = expression;
 	expression = "";
 	for (size_t i = 0; i < baseExpression.size(); i++)
@@ -17,31 +17,31 @@ Lexer::Lexer(std::string expression)
 		switch (expression[i])
 		{
 		case '+':
-			this->tokens.push_back(std::pair<Token, std::string>(Token::Plus, "+"));
+			this->tokens->push_back(std::pair<Token, std::string>(Token::Plus, "+"));
 			break;
 
 		case '-':
-			this->tokens.push_back(std::pair<Token, std::string>(Token::Minus, "-"));
+			this->tokens->push_back(std::pair<Token, std::string>(Token::Minus, "-"));
 			break;
 
 		case '*':
-			this->tokens.push_back(std::pair<Token, std::string>(Token::Star, "*"));
+			this->tokens->push_back(std::pair<Token, std::string>(Token::Star, "*"));
 			break;
 
 		case '/':
-			this->tokens.push_back(std::pair<Token, std::string>(Token::Slash, "/"));
+			this->tokens->push_back(std::pair<Token, std::string>(Token::Slash, "/"));
 			break;
 
 		case '^':
-			this->tokens.push_back(std::pair<Token, std::string>(Token::Caret, "^"));
+			this->tokens->push_back(std::pair<Token, std::string>(Token::Caret, "^"));
 			break;
 
 		case '(':
-			this->tokens.push_back(std::pair<Token, std::string>(Token::Left_parenthesis, "("));
+			this->tokens->push_back(std::pair<Token, std::string>(Token::Left_parenthesis, "("));
 			break;
 
 		case ')':
-			this->tokens.push_back(std::pair<Token, std::string>(Token::Right_parenthesis, ")"));
+			this->tokens->push_back(std::pair<Token, std::string>(Token::Right_parenthesis, ")"));
 			break;
 
 		default:
@@ -49,7 +49,7 @@ Lexer::Lexer(std::string expression)
 			{
 				std::string variable;
 				variable += expression[i];
-				this->tokens.push_back(std::pair<Token, std::string>(Token::Variable, variable));
+				this->tokens->push_back(std::pair<Token, std::string>(Token::Variable, variable));
 				continue;
 			}
 
@@ -62,7 +62,7 @@ Lexer::Lexer(std::string expression)
 					i++;
 				}
 				i--;
-				this->tokens.push_back(std::pair<Token, std::string>(Token::String, litteral));
+				this->tokens->push_back(std::pair<Token, std::string>(Token::String, litteral));
 			}
 
 			if (this->isNumber((expression[i])))
@@ -74,13 +74,18 @@ Lexer::Lexer(std::string expression)
 					i++;
 				}
 				i--;
-				this->tokens.push_back(std::pair<Token, std::string>(Token::Number, number));
+				this->tokens->push_back(std::pair<Token, std::string>(Token::Number, number));
 			}
 			break;
 		}
 	}
 
-	this->tokens.push_back(std::pair<Token, std::string>(Token::End, "end"));
+	this->tokens->push_back(std::pair<Token, std::string>(Token::End, "end"));
+}
+
+Lexer::~Lexer()
+{
+	delete tokens;
 }
 
 bool Lexer::isLetter(char input)

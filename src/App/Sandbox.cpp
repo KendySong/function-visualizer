@@ -7,7 +7,8 @@
 #include "Sandbox.hpp"
 #include "../Config.hpp"
 #include "../Graphics/Vertex.hpp"
-#include "Application.hpp"
+#include "../Interpreter/Lexer.hpp"
+#include "../Interpreter/Interpreter.hpp"
 
 Sandbox::Sandbox(GLFWwindow* window)
 {
@@ -46,12 +47,14 @@ Sandbox::Sandbox(GLFWwindow* window)
 
     m_gridMesh = Plane(
         glm::vec2(PLANE_SIZE_X, PLANE_SIZE_Y), 
-        glm::vec2(PLANE_GRID_X, PLANE_GRID_Y)
+        glm::vec2(PLANE_GRID_X, PLANE_GRID_Y),
+        nullptr
     );
 
     m_functionMesh = Plane(
         glm::vec2(PLANE_SIZE_X, PLANE_SIZE_Y),
-        glm::vec2(PLANE_GRID_X, PLANE_GRID_Y)
+        glm::vec2(PLANE_GRID_X, PLANE_GRID_Y),
+        nullptr
     );
     
     //Set up camera and projection
@@ -102,16 +105,21 @@ void Sandbox::render()
 
     if (ImGui::Button("Apply"))
     {    
+        std::string function(funcBuffer);
+        Lexer lexer(function);
+        Interpreter interpreter(*lexer.tokens);
+
         m_gridMesh = Plane(
             glm::vec2(planeSize[0], planeSize[1]),
-            glm::vec2(planeGrid[0], planeGrid[1])
+            glm::vec2(planeGrid[0], planeGrid[1]),
+            nullptr
         );
 
         m_functionMesh = Plane(
             glm::vec2(planeSize[0], planeSize[1]),
-            glm::vec2(planeGrid[0], planeGrid[1])
-        );      
-        std::string function(funcBuffer);
+            glm::vec2(planeGrid[0], planeGrid[1]),
+            &interpreter
+        );
     }
     ImGui::End();
 

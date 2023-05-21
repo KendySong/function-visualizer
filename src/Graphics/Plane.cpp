@@ -4,7 +4,7 @@
 
 #include "Plane.hpp"
 
-Plane::Plane(glm::vec2 worldSize, glm::vec2 gridSize)
+Plane::Plane(glm::vec2 worldSize, glm::vec2 gridSize, Interpreter* interpreter)
 {
     glm::vec2 caseSize = worldSize / gridSize;
     glm::vec2 halfWorld = worldSize / glm::vec2(2, 2);
@@ -18,8 +18,15 @@ Plane::Plane(glm::vec2 worldSize, glm::vec2 gridSize)
     {
         for (size_t x = 0; x <= gridSize.x; x++)
         {
+            float height = 0;
+            if (interpreter != nullptr)
+            {
+                interpreter->setVariable(x, y);
+                height = interpreter->interpretAST();          
+            }
+
             vertices.push_back({ 
-                { (x * caseSize.x) - halfWorld.x, 0, (y * caseSize.y) - halfWorld.y},
+                { (x * caseSize.x) - halfWorld.x, height, (y * caseSize.y) - halfWorld.y},
                 { 0, 1, 0 }
             });
         }

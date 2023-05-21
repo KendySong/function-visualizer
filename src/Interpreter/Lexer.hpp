@@ -8,7 +8,8 @@ class Lexer
 {
 public :
 	Lexer(std::string expression);
-	std::vector<std::pair<Token, std::string>> tokens;
+	~Lexer();
+	std::vector<std::pair<Token, std::string>>* tokens;
 
 private :
 	bool isLetter(char input);

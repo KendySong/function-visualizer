@@ -4,12 +4,13 @@
 #include <glm/glm.hpp>
 
 #include "Vertex.hpp"
+#include "../Interpreter/Interpreter.hpp"
 
 class Plane
 {
 public :
     Plane() = default;
-    Plane(glm::vec2 worldSize, glm::vec2 gridSize);
+    Plane(glm::vec2 worldSize, glm::vec2 gridSize, Interpreter* interpreter);
     void draw(); 
 
 private :

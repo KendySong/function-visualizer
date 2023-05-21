@@ -3,14 +3,16 @@
 #include "Interpreter.hpp"
 #include "Lexer.hpp"
 
-
-Interpreter::Interpreter(std::string expression, float x, float y)
+Interpreter::Interpreter(std::vector<std::pair<Token, std::string>>& tokens)
 {
-	Lexer lexer(expression);
-	m_tokens = lexer.tokens;
+	m_tokens = tokens;
 
 	m_tokenIndex = 0;
 	m_currentToken = m_tokens[m_tokenIndex];
+}
+
+void Interpreter::setVariable(float x, float y)
+{
 	m_variables["x"] = x;
 	m_variables["y"] = y;
 }
@@ -151,6 +153,12 @@ float Interpreter::value()
 			this->advanceToken();
 			float input = this->value();
 			return atan(input);
+		}
+		else if (m_currentToken.second == "sqrt")
+		{
+			this->advanceToken();
+			float input = this->value();
+			return sqrt(input);
 		}
 		else if (m_currentToken.second == "log")
 		{

@@ -8,7 +8,8 @@
 class Interpreter
 {
 public :
-	Interpreter(std::string expression, float x, float y);
+	Interpreter(std::vector<std::pair<Token, std::string>>& tokens);
+	void setVariable(float x, float y);
 	float interpretAST();
 
 private :
