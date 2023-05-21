@@ -1,10 +1,14 @@
 #include <cmath>
 
 #include "Interpreter.hpp"
+#include "Lexer.hpp"
 
-Interpreter::Interpreter(const std::vector<std::pair<Token, std::string>>& tokens, float x, float y)
+
+Interpreter::Interpreter(std::string expression, float x, float y)
 {
-	m_tokens = tokens;
+	Lexer lexer(expression);
+	m_tokens = lexer.tokens;
+
 	m_tokenIndex = 0;
 	m_currentToken = m_tokens[m_tokenIndex];
 	m_variables["x"] = x;

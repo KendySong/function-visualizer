@@ -110,7 +110,7 @@ void Sandbox::render()
         m_functionMesh = Plane(
             glm::vec2(planeSize[0], planeSize[1]),
             glm::vec2(planeGrid[0], planeGrid[1])
-        );
+        );      
         std::string function(funcBuffer);
     }
     ImGui::End();
