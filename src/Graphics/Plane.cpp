@@ -1,5 +1,4 @@
 #include <vector>
-#include <random>
 
 #include <glad/glad.h>
 
@@ -13,7 +12,7 @@ Plane::Plane(glm::vec2 worldSize, glm::vec2 gridSize)
     std::vector<Vertex> vertices;
     std::vector<std::uint32_t> indices;
 
-    srand(time(nullptr));
+    //Generate vertices
     vertices.reserve((gridSize.x + 1) * (gridSize.x + 1));
     for (size_t y = 0; y <= gridSize.y; y++)
     {
@@ -26,6 +25,7 @@ Plane::Plane(glm::vec2 worldSize, glm::vec2 gridSize)
         }
     }
 
+    //Generate indices
     indices.reserve(gridSize.x * gridSize.y * 6);
     for (std::uint32_t y = 0; y < gridSize.y; y++)
     {
@@ -41,7 +41,7 @@ Plane::Plane(glm::vec2 worldSize, glm::vec2 gridSize)
             indices.push_back(xGrid + 1);
         }
     }
-    this->elementSize = indices.size();
+    m_elementSize = indices.size();
 
     glGenVertexArrays(1, &m_vao);
     glBindVertexArray(m_vao);
@@ -58,14 +58,12 @@ Plane::Plane(glm::vec2 worldSize, glm::vec2 gridSize)
     glEnableVertexAttribArray(1);
     glVertexAttribPointer(0, 3, GL_FLOAT, false, 2 * sizeof(glm::vec3), (void*)0);
     glVertexAttribPointer(1, 3, GL_FLOAT, false, 2 * sizeof(glm::vec3), (void*)(sizeof(glm::vec3)));
+}
 
-    /*
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-    glBindVertexArray(0);
-
-    glDeleteVertexArrays(1, &m_vao);
-    glDeleteBuffers(1, &m_ebo);
-    glDeleteBuffers(1, &m_vbo);
-    */
+void Plane::draw()
+{
+    glBindVertexArray(m_vao);
+    glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_ebo);
+    glDrawElements(GL_TRIANGLES, m_elementSize, GL_UNSIGNED_INT, 0);
 }

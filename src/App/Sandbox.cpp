@@ -44,8 +44,13 @@ Sandbox::Sandbox(GLFWwindow* window)
     glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, WIN_WIDTH, WIN_HEIGHT);
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, m_rbo);
 
-    m_plane = Plane(
+    m_gridMesh = Plane(
         glm::vec2(PLANE_SIZE_X, PLANE_SIZE_Y), 
+        glm::vec2(PLANE_GRID_X, PLANE_GRID_Y)
+    );
+
+    m_functionMesh = Plane(
+        glm::vec2(PLANE_SIZE_X, PLANE_SIZE_Y),
         glm::vec2(PLANE_GRID_X, PLANE_GRID_Y)
     );
     
@@ -80,7 +85,8 @@ void Sandbox::render()
 
     glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    glDrawElements(GL_TRIANGLES, m_plane.elementSize, GL_UNSIGNED_INT, 0);
+    m_gridMesh.draw();
+    m_functionMesh.draw();
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
     ImGui::BeginMainMenuBar();
@@ -96,7 +102,12 @@ void Sandbox::render()
 
     if (ImGui::Button("Apply"))
     {    
-        m_plane = Plane(
+        m_gridMesh = Plane(
+            glm::vec2(planeSize[0], planeSize[1]),
+            glm::vec2(planeGrid[0], planeGrid[1])
+        );
+
+        m_functionMesh = Plane(
             glm::vec2(planeSize[0], planeSize[1]),
             glm::vec2(planeGrid[0], planeGrid[1])
         );

@@ -32,7 +32,8 @@ private :
 
     OrbitCamera m_camera;
     Shader m_shader;
-    Plane m_plane;
+    Plane m_gridMesh;
+    Plane m_functionMesh;
     glm::vec2 m_planeSize;
 
     std::uint32_t m_fbo;

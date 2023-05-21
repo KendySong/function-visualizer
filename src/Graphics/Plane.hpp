@@ -10,10 +10,10 @@ class Plane
 public :
     Plane() = default;
     Plane(glm::vec2 worldSize, glm::vec2 gridSize);
-
-    std::uint32_t elementSize;
+    void draw(); 
 
 private :
+    std::uint32_t m_elementSize;
     std::uint32_t m_vao;
     std::uint32_t m_ebo;
     std::uint32_t m_vbo;
