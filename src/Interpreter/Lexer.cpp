@@ -17,31 +17,31 @@ Lexer::Lexer(std::string expression)
 		switch (expression[i])
 		{
 		case '+':
-			this->tokens.push_back(std::pair<Token, std::string>(Token::PLUS, "+"));
+			this->tokens.push_back(std::pair<Token, std::string>(Token::Plus, "+"));
 			break;
 
 		case '-':
-			this->tokens.push_back(std::pair<Token, std::string>(Token::MINUS, "-"));
+			this->tokens.push_back(std::pair<Token, std::string>(Token::Minus, "-"));
 			break;
 
 		case '*':
-			this->tokens.push_back(std::pair<Token, std::string>(Token::STAR, "*"));
+			this->tokens.push_back(std::pair<Token, std::string>(Token::Star, "*"));
 			break;
 
 		case '/':
-			this->tokens.push_back(std::pair<Token, std::string>(Token::SLASH, "/"));
+			this->tokens.push_back(std::pair<Token, std::string>(Token::Slash, "/"));
 			break;
 
 		case '^':
-			this->tokens.push_back(std::pair<Token, std::string>(Token::CARET, "^"));
+			this->tokens.push_back(std::pair<Token, std::string>(Token::Caret, "^"));
 			break;
 
 		case '(':
-			this->tokens.push_back(std::pair<Token, std::string>(Token::LEFT_PATENTHESIS, "("));
+			this->tokens.push_back(std::pair<Token, std::string>(Token::Left_parenthesis, "("));
 			break;
 
 		case ')':
-			this->tokens.push_back(std::pair<Token, std::string>(Token::RIGHT_PATENTHESIS, ")"));
+			this->tokens.push_back(std::pair<Token, std::string>(Token::Right_parenthesis, ")"));
 			break;
 
 		default:
@@ -49,7 +49,7 @@ Lexer::Lexer(std::string expression)
 			{
 				std::string variable;
 				variable += expression[i];
-				this->tokens.push_back(std::pair<Token, std::string>(Token::VARIABLE, variable));
+				this->tokens.push_back(std::pair<Token, std::string>(Token::Variable, variable));
 				continue;
 			}
 
@@ -62,7 +62,7 @@ Lexer::Lexer(std::string expression)
 					i++;
 				}
 				i--;
-				this->tokens.push_back(std::pair<Token, std::string>(Token::STRING, litteral));
+				this->tokens.push_back(std::pair<Token, std::string>(Token::String, litteral));
 			}
 
 			if (this->isNumber((expression[i])))
@@ -74,13 +74,13 @@ Lexer::Lexer(std::string expression)
 					i++;
 				}
 				i--;
-				this->tokens.push_back(std::pair<Token, std::string>(Token::NUMBER, number));
+				this->tokens.push_back(std::pair<Token, std::string>(Token::Number, number));
 			}
 			break;
 		}
 	}
 
-	this->tokens.push_back(std::pair<Token, std::string>(Token::END, "end"));
+	this->tokens.push_back(std::pair<Token, std::string>(Token::End, "end"));
 }
 
 bool Lexer::isLetter(char input)

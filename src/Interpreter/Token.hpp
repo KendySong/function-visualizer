@@ -1,17 +1,16 @@
 #pragma once
 enum class Token
 {
-	PLUS,
-	MINUS,
-	STAR,
-	SLASH,
-	CARET,
-	LEFT_PATENTHESIS,
-	RIGHT_PATENTHESIS,
+	Plus,
+	Minus,
+	Star,
+	Slash,
+	Caret,
+	Left_parenthesis,
+	Right_parenthesis,
 
-
-	VARIABLE,
-	STRING,
-	NUMBER,
-	END
+	Variable,
+	String,
+	Number,
+	End
 };

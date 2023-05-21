@@ -24,15 +24,15 @@ const std::pair<Token, std::string>& Interpreter::peek()
 float Interpreter::interpretAST()
 {
 	float result = this->multiplyDivide();
-	while (m_currentToken.first == Token::PLUS || m_currentToken.first == Token::MINUS)
+	while (m_currentToken.first == Token::Plus || m_currentToken.first == Token::Minus)
 	{
-		if (m_currentToken.first == Token::PLUS)
+		if (m_currentToken.first == Token::Plus)
 		{
 			this->advanceToken();
 			result += this->multiplyDivide();
 		}
 
-		if (m_currentToken.first == Token::MINUS)
+		if (m_currentToken.first == Token::Minus)
 		{
 			this->advanceToken();
 			result -= this->multiplyDivide();
@@ -45,15 +45,15 @@ float Interpreter::interpretAST()
 float Interpreter::multiplyDivide()
 {
 	float result = this->power();
-	while (m_currentToken.first == Token::STAR || m_currentToken.first == Token::SLASH)
+	while (m_currentToken.first == Token::Star || m_currentToken.first == Token::Slash)
 	{
-		if (m_currentToken.first == Token::STAR)
+		if (m_currentToken.first == Token::Star)
 		{
 			this->advanceToken();
 			result *= this->power();
 		}
 
-		if (m_currentToken.first == Token::SLASH)
+		if (m_currentToken.first == Token::Slash)
 		{
 			this->advanceToken();
 			result /= this->power();
@@ -66,7 +66,7 @@ float Interpreter::multiplyDivide()
 float Interpreter::power()
 {
 	float result = this->value();
-	while (m_currentToken.first == Token::CARET)
+	while (m_currentToken.first == Token::Caret)
 	{
 		this->advanceToken();
 		result = pow(result, this->value());
@@ -80,23 +80,90 @@ float Interpreter::value()
 	float value = 0;
 	switch (m_currentToken.first)
 	{
-	case Token::NUMBER:
+	case Token::Plus :
+		this->advanceToken();
+		value = this->value();
+		return value;
+		break;
+
+	case Token::Minus :
+		this->advanceToken();
+		value = this->value();
+		return -value;
+		break;
+
+	case Token::Number:
 		value = std::stof(m_currentToken.second);
 		this->advanceToken();
 		return value;
 		break;
 
-	case Token::VARIABLE:
+	case Token::Variable:
 		value = m_variables[m_currentToken.second];
 		this->advanceToken();
 		return value;
 		break;
 
-	case Token::LEFT_PATENTHESIS :
+	case Token::Left_parenthesis :
 		this->advanceToken();
 		value = this->interpretAST();
 		this->advanceToken();
 		return value;
+		break;
+
+	case Token::String :
+		if (m_currentToken.second == "cos")
+		{
+			this->advanceToken();
+			float input = this->value();
+			return cos(input);
+		}
+		else if (m_currentToken.second == "sin")
+		{
+			this->advanceToken();
+			float input = this->value();
+			return sin(input);
+		}
+		else if (m_currentToken.second == "tan")
+		{
+			this->advanceToken();
+			float input = this->value();
+			return tan(input);
+		}
+		else if (m_currentToken.second == "acos")
+		{
+			this->advanceToken();
+			float input = this->value();
+			return acos(input);
+		}
+		else if (m_currentToken.second == "asin")
+		{
+			this->advanceToken();
+			float input = this->value();
+			return asin(input);
+		}
+		else if (m_currentToken.second == "atan")
+		{
+			this->advanceToken();
+			float input = this->value();
+			return atan(input);
+		}
+		else if (m_currentToken.second == "log")
+		{
+			this->advanceToken();
+			float input = this->value();
+			return log(input);
+		}
+		else if (m_currentToken.second == "abs")
+		{
+			this->advanceToken();
+			float input = this->value();
+			return abs(input);
+		}
+		else
+		{
+			m_errors.push_back("[ERROR] Function unknwon " + m_currentToken.second);
+		}
 		break;
 
 	default :
