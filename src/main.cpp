@@ -6,7 +6,7 @@
 int main()
 {
 	//log(x + y) + sin(x^2 + y^2)
-    Lexer lexer("x + y / 2");
+    Lexer lexer("(x + x)^y");
 	for (size_t i = 0; i < lexer.tokens.size(); i++)
 	{
 		std::cout << (int)lexer.tokens[i].first << '|' << lexer.tokens[i].second << '\n';

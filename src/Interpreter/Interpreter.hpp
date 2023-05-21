@@ -14,9 +14,8 @@ public :
 private :
 	void advanceToken();
 	const std::pair<Token, std::string>& peek();
-
-	float plusMinus();
 	float multiplyDivide();
+	float power();
 	float value();
 
 private:
