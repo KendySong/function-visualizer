@@ -111,8 +111,6 @@ void Sandbox::render()
     ImGui::DragFloat("Zoom", &m_camera.distance, 1, 0, std::numeric_limits<float>::max());
     ImGui::DragFloat2("Graph size", &planeSize[0], 0.1);
     ImGui::DragInt2("Graph grid size", &planeGrid[0], 0.1);
-
-
     
     if (ImGui::Button("Apply"))
     {
