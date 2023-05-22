@@ -40,6 +40,10 @@ private :
     std::uint32_t m_rbo;
     std::uint32_t m_frameTexture;
     ImVec2 m_imageCorner;
+
+    std::string m_logs;
+    bool m_autoScroll;
+    std::uint32_t m_logLine;
    
     GLFWwindow* p_window;
 };

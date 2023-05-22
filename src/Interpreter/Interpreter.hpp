@@ -10,7 +10,10 @@ class Interpreter
 public :
 	Interpreter(std::vector<std::pair<Token, std::string>>& tokens);
 	void setVariable(float x, float y);
+	void reset();
 	float interpretAST();
+
+	std::vector<std::string> errors;
 
 private :
 	void advanceToken();
@@ -20,7 +23,7 @@ private :
 	float value();
 
 private:
-	std::vector<std::string> m_errors;
+	
 	std::map<std::string, float> m_variables;
 	std::uint32_t m_tokenIndex;
 	std::pair<Token, std::string> m_currentToken;

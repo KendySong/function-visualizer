@@ -13,6 +13,7 @@
 Sandbox::Sandbox(GLFWwindow* window)
 {
     p_window = window;
+    m_autoScroll = true;
     m_displayFramerate = 0;
     m_framerate = 0;
     m_renderMode = { 
@@ -89,7 +90,7 @@ void Sandbox::render()
     glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     m_gridMesh.draw();
-    m_functionMesh.draw();
+    m_functionMesh.draw(); 
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
     ImGui::BeginMainMenuBar();
@@ -120,7 +121,31 @@ void Sandbox::render()
             glm::vec2(planeGrid[0], planeGrid[1]),
             &interpreter
         );
+
+        m_logLine = interpreter.errors.size();
+        for (size_t i = 0; i < interpreter.errors.size(); i++)
+        {
+            m_logs += interpreter.errors[i];
+        }
     }
+    ImGui::End();
+
+    ImGui::Begin("Console");
+        if (ImGui::Button("Clear"))
+        {
+            m_logs = "";
+        }
+        ImGui::SameLine();
+        ImGui::Checkbox("Scroll to bottom", &m_autoScroll);
+        ImGui::Separator();
+
+        ImGui::BeginChild("child");
+            if (m_autoScroll)
+            {
+                ImGui::SetScrollY(ImGui::GetTextLineHeight() * m_logLine);
+            }
+            ImGui::TextUnformatted(m_logs.c_str());
+        ImGui::EndChild();
     ImGui::End();
 
     ImGui::Begin("Graphics");

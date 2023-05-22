@@ -3,6 +3,7 @@
 #include <glad/glad.h>
 
 #include "Plane.hpp"
+#include "../App/Log.hpp"
 
 Plane::Plane(glm::vec2 worldSize, glm::vec2 gridSize, Interpreter* interpreter)
 {
@@ -13,6 +14,7 @@ Plane::Plane(glm::vec2 worldSize, glm::vec2 gridSize, Interpreter* interpreter)
     std::vector<std::uint32_t> indices;
 
     //Generate vertices
+    glm::vec2 input(-gridSize.x / 2, -gridSize.y / 2);
     vertices.reserve((gridSize.x + 1) * (gridSize.x + 1));
     for (size_t y = 0; y <= gridSize.y; y++)
     {
@@ -21,13 +23,20 @@ Plane::Plane(glm::vec2 worldSize, glm::vec2 gridSize, Interpreter* interpreter)
             float height = 0;
             if (interpreter != nullptr)
             {
-                interpreter->setVariable(x, y);
-                height = interpreter->interpretAST();          
+                interpreter->reset();
+                interpreter->setVariable(input.x + x, input.y + y);
+                height = interpreter->interpretAST();
+#ifdef DEBUG
+                std::string xStr = std::to_string(input.x + x);
+                std::string yStr = std::to_string(input.y + y);
+                std::string heightStr = std::to_string(height);
+                Log::instance()->log("[INFO] x[" + xStr + "] y[" + yStr + "] = " + heightStr + '\n', GREEN);
+#endif
             }
 
             vertices.push_back({ 
-                { (x * caseSize.x) - halfWorld.x, height, (y * caseSize.y) - halfWorld.y},
-                { 0, 1, 0 }
+                { (x * caseSize.x) - halfWorld.x, -height, (y * caseSize.y) - halfWorld.y},
+                { 0, 1, 0}
             });
         }
     }

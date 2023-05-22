@@ -17,6 +17,12 @@ void Interpreter::setVariable(float x, float y)
 	m_variables["y"] = y;
 }
 
+void Interpreter::reset()
+{
+	m_tokenIndex = 0;
+	m_currentToken = m_tokens[m_tokenIndex];
+}
+
 void Interpreter::advanceToken()
 {
 	m_currentToken = m_tokens[++m_tokenIndex];
@@ -174,14 +180,14 @@ float Interpreter::value()
 		}
 		else
 		{
-			m_errors.push_back("[ERROR] Function unknwon " + m_currentToken.second);
+			this->errors.push_back("[ERROR] Function unknowm " + m_currentToken.second + '\n');
+			return 0;
 		}
 		break;
 
 	default :
-		m_errors.push_back("[ERROR] Token type unknowm " + std::to_string((int)m_currentToken.first));
+		this->errors.push_back("[ERROR] Token type unknowm " + std::to_string((int)m_currentToken.first) + '\n');
+		return 0;
 		break;
 	}
-
-	return 0;
 }
