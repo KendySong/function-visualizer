@@ -5,7 +5,7 @@
 #include "Plane.hpp"
 #include "../App/Log.hpp"
 
-Plane::Plane(glm::vec2 worldSize, glm::vec2 gridSize, Interpreter* interpreter)
+Plane::Plane(glm::vec2 worldSize, glm::vec2 gridSize, glm::vec3 color, Interpreter* interpreter)
 {
     glm::vec2 caseSize = worldSize / gridSize;
     glm::vec2 halfWorld = worldSize / glm::vec2(2, 2);
@@ -26,6 +26,7 @@ Plane::Plane(glm::vec2 worldSize, glm::vec2 gridSize, Interpreter* interpreter)
                 interpreter->reset();
                 interpreter->setVariable(input.x + x, input.y + y);
                 height = interpreter->interpretAST();
+                color = glm::vec3(0, 1, 1);
 #ifdef DEBUG
                 std::string xStr = std::to_string(input.x + x);
                 std::string yStr = std::to_string(input.y + y);
@@ -36,7 +37,7 @@ Plane::Plane(glm::vec2 worldSize, glm::vec2 gridSize, Interpreter* interpreter)
 
             vertices.push_back({ 
                 { (x * caseSize.x) - halfWorld.x, -height, (y * caseSize.y) - halfWorld.y},
-                { 0, 1, 0}
+                { color.x, color.y, color.z }
             });
         }
     }

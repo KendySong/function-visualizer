@@ -34,7 +34,7 @@ private :
     Shader m_shader;
     Plane m_gridMesh;
     Plane m_functionMesh;
-    glm::vec2 m_planeSize;
+    glm::vec3 m_gridColor;
 
     std::uint32_t m_fbo;
     std::uint32_t m_rbo;

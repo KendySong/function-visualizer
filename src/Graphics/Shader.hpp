@@ -10,6 +10,7 @@ public:
 	Shader(const char* vertexPath, const char* fragmentPath);
 
 	void setMat4x4(const char* name, const glm::mat4x4& matrix);
+	void setVec3(const char* name, const glm::vec3& vec);
 	std::uint32_t getProgram() noexcept;
 
 private:

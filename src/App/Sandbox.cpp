@@ -13,15 +13,16 @@
 Sandbox::Sandbox(GLFWwindow* window)
 {
     p_window = window;
+    m_framerate = 0;
     m_autoScroll = true;
     m_displayFramerate = 0;
-    m_framerate = 0;
     m_renderMode = { 
         { "Wireframe", []() {glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); } },
         { "Fill",      []() {glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); } },
         { "Points",    []() {glPolygonMode(GL_FRONT_AND_BACK, GL_POINT);} }
     };
     m_currentMode = m_renderMode[0].name;
+    m_gridColor = glm::vec3(0, 1, 0);
 
     glEnable(GL_DEPTH_TEST);
     glViewport(0, 0, WIN_WIDTH, WIN_HEIGHT);
@@ -49,12 +50,14 @@ Sandbox::Sandbox(GLFWwindow* window)
     m_gridMesh = Plane(
         glm::vec2(PLANE_SIZE_X, PLANE_SIZE_Y), 
         glm::vec2(PLANE_GRID_X, PLANE_GRID_Y),
+        m_gridColor,
         nullptr
     );
 
     m_functionMesh = Plane(
         glm::vec2(PLANE_SIZE_X, PLANE_SIZE_Y),
         glm::vec2(PLANE_GRID_X, PLANE_GRID_Y),
+        m_gridColor,
         nullptr
     );
     
@@ -103,22 +106,25 @@ void Sandbox::render()
     ImGui::InputText("Function", funcBuffer, sizeof(funcBuffer));
     ImGui::DragFloat2("Graph size", &planeSize[0], 0.1);
     ImGui::DragInt2("Graph grid size", &planeGrid[0], 0.1);
+    ImGui::DragFloat("Zoom", &m_camera.distance);
 
     if (ImGui::Button("Apply"))
-    {    
+    {
         std::string function(funcBuffer);
         Lexer lexer(function);
         Interpreter interpreter(*lexer.tokens);
 
         m_gridMesh = Plane(
             glm::vec2(planeSize[0], planeSize[1]),
-            glm::vec2(planeGrid[0], planeGrid[1]),
+            glm::vec2(10, 10),
+            m_gridColor,
             nullptr
         );
 
         m_functionMesh = Plane(
             glm::vec2(planeSize[0], planeSize[1]),
             glm::vec2(planeGrid[0], planeGrid[1]),
+            m_gridColor,
             &interpreter
         );
 
@@ -161,6 +167,17 @@ void Sandbox::render()
             }
             ImGui::EndCombo();
         } 
+
+        ImGui::ColorEdit3("Grid color", &m_gridColor[0]);
+        if (ImGui::Button("Apply"))
+        {
+            m_gridMesh = Plane(
+                glm::vec2(planeSize[0], planeSize[1]),
+                glm::vec2(planeGrid[0], planeGrid[1]),
+                m_gridColor,
+                nullptr
+            );
+        }
     ImGui::End();
 
     ImGui::Begin("Render");  

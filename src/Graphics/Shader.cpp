@@ -72,6 +72,11 @@ void Shader::setMat4x4(const char* name, const glm::mat4x4& matrix)
 	glUniformMatrix4fv(glGetUniformLocation(this->m_program, name), 1, false, glm::value_ptr(matrix));
 }
 
+void Shader::setVec3(const char* name, const glm::vec3& vec)
+{
+	glUniform3fv(glGetUniformLocation(m_program, name), 1, glm::value_ptr(vec));
+}
+
 std::uint32_t Shader::getProgram() noexcept
 {
 	return m_program;

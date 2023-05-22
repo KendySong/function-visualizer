@@ -19,11 +19,9 @@ private :
 
 public :
     glm::mat4x4 view;
-    float m_distance;
+    float distance;
 
 private :
-    
-
     GLFWwindow* p_window;
     glm::vec3 m_position;
     glm::vec3 m_center;

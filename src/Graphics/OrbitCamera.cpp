@@ -11,11 +11,11 @@ OrbitCamera::OrbitCamera(GLFWwindow* window, glm::vec3 center, float distance)
 	p_window = window;
 	m_up = glm::vec3(0, 1, 0);
 	m_center = center;
-	m_distance = distance;
+	this->distance = distance;
 	m_rotation.y = -M_PI / 4;
 
 	this->rotate();
-	this->view = glm::lookAt(m_position * m_distance, m_center, m_up);
+	this->view = glm::lookAt(m_position * this->distance, m_center, m_up);
 }
 
 void OrbitCamera::processMovements(float deltaTime, glm::vec2 mouse)
@@ -43,7 +43,7 @@ void OrbitCamera::processMovements(float deltaTime, glm::vec2 mouse)
 	}
 
 	m_last = mouse;
-	this->view = glm::lookAt(m_position * m_distance, m_center, m_up);
+	this->view = glm::lookAt(m_position * this->distance, m_center, m_up);
 }
 
 void OrbitCamera::rotate()
