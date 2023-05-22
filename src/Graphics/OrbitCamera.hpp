@@ -20,6 +20,7 @@ private :
 public :
     glm::mat4x4 view;
     float distance;
+    glm::vec3 offsetOrigin;
 
 private :
     GLFWwindow* p_window;

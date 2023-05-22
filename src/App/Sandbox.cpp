@@ -1,3 +1,5 @@
+#include <limits>
+
 #include <ImGui/imgui.h>
 #include <ImGui/imgui_impl_glfw.h>
 #include <ImGui/imgui_impl_opengl3.h>
@@ -14,6 +16,7 @@ Sandbox::Sandbox(GLFWwindow* window)
 {
     p_window = window;
     m_framerate = 0;
+    m_maxValue = BASE_MAX_FUNCTION;
     m_autoScroll = true;
     m_displayFramerate = 0;
     m_renderMode = { 
@@ -65,7 +68,7 @@ Sandbox::Sandbox(GLFWwindow* window)
     float aspectRatio = (float)WIN_WIDTH / (float)WIN_HEIGHT;
     glm::mat4x4 projection = glm::perspective(glm::radians(90.0f), aspectRatio, 0.1f, 10000.0f);
     m_shader.setMat4x4("projection", projection);
-    m_camera = OrbitCamera(window, glm::vec3(0, 0, 0), 10);
+    m_camera = OrbitCamera(window, glm::vec3(0, 0, 0), 80);
 }
 
 void Sandbox::update(float deltaTime)
@@ -104,34 +107,40 @@ void Sandbox::render()
     ImGui::Begin("Functions");
     
     ImGui::InputText("Function", funcBuffer, sizeof(funcBuffer));
+    ImGui::DragFloat("Max value", &m_maxValue, 1, 0, std::numeric_limits<float>::max());
+    ImGui::DragFloat("Zoom", &m_camera.distance, 1, 0, std::numeric_limits<float>::max());
     ImGui::DragFloat2("Graph size", &planeSize[0], 0.1);
     ImGui::DragInt2("Graph grid size", &planeGrid[0], 0.1);
-    ImGui::DragFloat("Zoom", &m_camera.distance);
 
+
+    
     if (ImGui::Button("Apply"))
     {
         std::string function(funcBuffer);
-        Lexer lexer(function);
-        Interpreter interpreter(*lexer.tokens);
-
-        m_gridMesh = Plane(
-            glm::vec2(planeSize[0], planeSize[1]),
-            glm::vec2(10, 10),
-            m_gridColor,
-            nullptr
-        );
-
-        m_functionMesh = Plane(
-            glm::vec2(planeSize[0], planeSize[1]),
-            glm::vec2(planeGrid[0], planeGrid[1]),
-            m_gridColor,
-            &interpreter
-        );
-
-        m_logLine = interpreter.errors.size();
-        for (size_t i = 0; i < interpreter.errors.size(); i++)
+        if (function.size() > 0)
         {
-            m_logs += interpreter.errors[i];
+            Lexer lexer(function);
+            Interpreter interpreter(*lexer.tokens);
+
+            m_gridMesh = Plane(
+                glm::vec2(planeSize[0], planeSize[1]),
+                glm::vec2(planeGrid[0], planeGrid[1]),
+                m_gridColor,
+                nullptr
+            );
+
+            m_functionMesh = Plane(
+                glm::vec2(planeSize[0], planeSize[1]),
+                glm::vec2(planeGrid[0], planeGrid[1]),
+                m_gridColor,
+                &interpreter
+            );
+
+            m_logLine = interpreter.errors.size();
+            for (size_t i = 0; i < interpreter.errors.size(); i++)
+            {
+                m_logs += interpreter.errors[i];
+            }
         }
     }
     ImGui::End();
@@ -167,7 +176,7 @@ void Sandbox::render()
             }
             ImGui::EndCombo();
         } 
-
+        ImGui::DragFloat("Camera height", &m_camera.offsetOrigin.y);
         ImGui::ColorEdit3("Grid color", &m_gridColor[0]);
         if (ImGui::Button("Apply"))
         {
@@ -178,6 +187,8 @@ void Sandbox::render()
                 nullptr
             );
         }
+
+        
     ImGui::End();
 
     ImGui::Begin("Render");  

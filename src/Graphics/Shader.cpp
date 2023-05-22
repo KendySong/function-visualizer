@@ -77,6 +77,11 @@ void Shader::setVec3(const char* name, const glm::vec3& vec)
 	glUniform3fv(glGetUniformLocation(m_program, name), 1, glm::value_ptr(vec));
 }
 
+void Shader::setFloat(const char* name, float value)
+{
+	glUniform1f(glGetUniformLocation(m_program, name), value);
+}
+
 std::uint32_t Shader::getProgram() noexcept
 {
 	return m_program;

@@ -11,6 +11,7 @@ public:
 
 	void setMat4x4(const char* name, const glm::mat4x4& matrix);
 	void setVec3(const char* name, const glm::vec3& vec);
+	void setFloat(const char* name, float value);
 	std::uint32_t getProgram() noexcept;
 
 private:

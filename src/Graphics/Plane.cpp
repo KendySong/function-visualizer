@@ -27,12 +27,6 @@ Plane::Plane(glm::vec2 worldSize, glm::vec2 gridSize, glm::vec3 color, Interpret
                 interpreter->setVariable(input.x + x, input.y + y);
                 height = interpreter->interpretAST();
                 color = glm::vec3(0, 1, 1);
-#ifdef DEBUG
-                std::string xStr = std::to_string(input.x + x);
-                std::string yStr = std::to_string(input.y + y);
-                std::string heightStr = std::to_string(height);
-                Log::instance()->log("[INFO] x[" + xStr + "] y[" + yStr + "] = " + heightStr + '\n', GREEN);
-#endif
             }
 
             vertices.push_back({ 
