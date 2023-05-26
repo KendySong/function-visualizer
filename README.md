@@ -8,7 +8,6 @@
 - premake5 vs2022
 ```
 
-
 ## Examples
 ### (x^2 + y^2)/20<br/>
 <img src="https://github.com/KendySong/function-visualizer/blob/main/screenshots/0.png">
@@ -21,3 +20,16 @@
 
 ### cos(abs(x)+abs(y)) <br/>
 <img src="https://github.com/KendySong/function-visualizer/blob/main/screenshots/3.png">
+
+## Interpreter features
+- Euler constant
+- cos
+- sin
+- tan
+- acos
+- asin
+- atan
+- sqrt
+- log
+- ln
+- abs
