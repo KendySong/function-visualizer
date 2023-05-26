@@ -18,6 +18,7 @@ Sandbox::Sandbox(GLFWwindow* window)
     m_framerate = 0;
     m_maxValue = BASE_MAX_FUNCTION;
     m_autoScroll = true;
+    m_displayGrid = true;
     m_displayFramerate = 0;
     m_renderMode = { 
         { "Wireframe", []() {glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); } },
@@ -51,24 +52,22 @@ Sandbox::Sandbox(GLFWwindow* window)
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, m_rbo);
 
     m_gridMesh = Plane(
-        glm::vec2(PLANE_SIZE_X, PLANE_SIZE_Y), 
-        glm::vec2(PLANE_GRID_X, PLANE_GRID_Y),
+        glm::vec2(PLANE_SIZE_X, PLANE_SIZE_Y),
         m_gridColor,
         nullptr
     );
-
+  
     m_functionMesh = Plane(
         glm::vec2(PLANE_SIZE_X, PLANE_SIZE_Y),
-        glm::vec2(PLANE_GRID_X, PLANE_GRID_Y),
         m_gridColor,
         nullptr
     );
     
     //Set up camera and projection
     float aspectRatio = (float)WIN_WIDTH / (float)WIN_HEIGHT;
-    glm::mat4x4 projection = glm::perspective(glm::radians(90.0f), aspectRatio, 0.1f, 10000.0f);
+    glm::mat4x4 projection = glm::perspective(glm::radians(50.0f), aspectRatio, 0.1f, 10000.0f);
     m_shader.setMat4x4("projection", projection);
-    m_camera = OrbitCamera(window, glm::vec3(0, 0, 0), 80);
+    m_camera = OrbitCamera(window, glm::vec3(0, 0, 0), 32);
 }
 
 void Sandbox::update(float deltaTime)
@@ -91,12 +90,15 @@ void Sandbox::render()
 {
     static char funcBuffer[512] = "";
     static float planeSize[2] = { PLANE_SIZE_X, PLANE_SIZE_Y };
-    static int planeGrid[2] = { PLANE_GRID_X, PLANE_GRID_Y };
 
     glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    m_gridMesh.draw();
-    m_functionMesh.draw(); 
+    if (m_displayGrid)
+    {
+        m_gridMesh.draw();
+    }
+    m_functionMesh.draw();
+    
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
     ImGui::BeginMainMenuBar();
@@ -107,29 +109,29 @@ void Sandbox::render()
     ImGui::Begin("Functions");
     
     ImGui::InputText("Function", funcBuffer, sizeof(funcBuffer));
-    ImGui::DragFloat("Max value", &m_maxValue, 1, 0, std::numeric_limits<float>::max());
+    ImGui::DragFloat("Max value", &m_maxValue, 0.01, 0, std::numeric_limits<float>::max());
     ImGui::DragFloat("Zoom", &m_camera.distance, 1, 0, std::numeric_limits<float>::max());
     ImGui::DragFloat2("Graph size", &planeSize[0], 0.1);
-    ImGui::DragInt2("Graph grid size", &planeGrid[0], 0.1);
     
+    m_shader.setFloat("maxFunctionOut", m_maxValue);
     if (ImGui::Button("Apply"))
     {
+        //Regenerate meshes with function interpretation
         std::string function(funcBuffer);
         if (function.size() > 0)
         {
+            //Lex the function here for avoid lex for each point of the grid
             Lexer lexer(function);
             Interpreter interpreter(*lexer.tokens);
 
             m_gridMesh = Plane(
                 glm::vec2(planeSize[0], planeSize[1]),
-                glm::vec2(planeGrid[0], planeGrid[1]),
                 m_gridColor,
                 nullptr
             );
 
             m_functionMesh = Plane(
                 glm::vec2(planeSize[0], planeSize[1]),
-                glm::vec2(planeGrid[0], planeGrid[1]),
                 m_gridColor,
                 &interpreter
             );
@@ -174,19 +176,17 @@ void Sandbox::render()
             }
             ImGui::EndCombo();
         } 
+        ImGui::Checkbox("Display Grid", &m_displayGrid);
         ImGui::DragFloat("Camera height", &m_camera.offsetOrigin.y);
         ImGui::ColorEdit3("Grid color", &m_gridColor[0]);
         if (ImGui::Button("Apply"))
         {
             m_gridMesh = Plane(
                 glm::vec2(planeSize[0], planeSize[1]),
-                glm::vec2(planeGrid[0], planeGrid[1]),
                 m_gridColor,
                 nullptr
             );
-        }
-
-        
+        }  
     ImGui::End();
 
     ImGui::Begin("Render");  

@@ -4,32 +4,94 @@
 
 #include "Plane.hpp"
 #include "../App/Log.hpp"
+#include <iostream>
 
-Plane::Plane(glm::vec2 worldSize, glm::vec2 gridSize, glm::vec3 color, Interpreter* interpreter)
+Plane::Plane(glm::vec2 size, glm::vec3 color, Interpreter* interpreter)
 {
-    glm::vec2 caseSize = worldSize / gridSize;
-    glm::vec2 halfWorld = worldSize / glm::vec2(2, 2);
+    float heighestPoint = 0;
+    float middlePoint = 0;
+    float lowestPoint = 0;
 
-    std::vector<Vertex> vertices;
-    std::vector<std::uint32_t> indices;
-
-    //Generate vertices
-    glm::vec2 input(-gridSize.x / 2, -gridSize.y / 2);
-    vertices.reserve((gridSize.x + 1) * (gridSize.x + 1));
-    for (size_t y = 0; y <= gridSize.y; y++)
+    glm::vec2 caseSize = size / size;
+    glm::vec2 halfWorld = size / glm::vec2(2, 2);
+    float* heightMap = new float[(size.x + 1) * (size.y + 1)];
+    if (interpreter != nullptr)
     {
-        for (size_t x = 0; x <= gridSize.x; x++)
+        color = glm::vec3(0, 1, 1);
+        glm::vec2 input(-size.x / 2, -size.y / 2);
+        interpreter->reset();
+        interpreter->setVariable(input.x, input.y);
+        heighestPoint = interpreter->interpretAST();
+        lowestPoint = heighestPoint;
+
+        //Precompute the heightmap for get the heighest and lowest point
+        for (size_t y = 0; y <= size.y; y++)
         {
-            float height = 0;
-            if (interpreter != nullptr)
+            for (size_t x = 0; x <= size.x; x++)
             {
                 interpreter->reset();
                 interpreter->setVariable(input.x + x, input.y + y);
-                height = interpreter->interpretAST();
-                color = glm::vec3(0, 1, 1);
+                float height = interpreter->interpretAST();
+                if (height > heighestPoint)
+                {
+                    heighestPoint = height;
+                }
+
+                if (height < lowestPoint)
+                {
+                    lowestPoint = height;
+                }
+
+                heightMap[(int)(size.x + 1) * y + x] = height;
+            }
+        }
+
+        middlePoint = glm::mix(heighestPoint, lowestPoint, 0.5);
+    }   
+    else
+    {
+        for (size_t y = 0; y <= size.y; y++)
+        {
+            for (size_t x = 0; x <= size.x; x++)
+            {
+                heightMap[(int)(size.x + 1) * y + x] = 0;
+            }
+        }
+    }
+
+    /*
+    for (size_t y = 0; y <= size.y; y++)
+    {
+        for (size_t x = 0; x <= size.x; x++)
+        {
+            std::cout << heightMap[(int)(size.x + 1) * y + x] << ' ';
+        }
+        std::cout << '\n';
+    }
+    */
+
+    //Generate vertices
+    std::vector<Vertex> vertices;
+    vertices.reserve((size.x + 1) * (size.x + 1));
+    for (size_t y = 0; y <= size.y; y++)
+    {
+        for (size_t x = 0; x <= size.x; x++)
+        {
+            float height = heightMap[(int)(size.x + 1) * y + x];
+            if (interpreter != nullptr)
+            {
+                //Transform the linear interpolation equation to isolate the scale
+                //x = a(1 - t) + t * b //we need to isolate t
+                //t = (x - a) / (-a + b)
+                float scale = (height - heighestPoint) / (-heighestPoint + lowestPoint);
+
+                //So we can compute the color with this scale
+                const glm::vec3 red = glm::vec3(1, 0, 0);
+                const glm::vec3 blue = glm::vec3(0, 0, 1);
+                color = (red - blue) * scale + blue;   
             }
 
-            vertices.push_back({ 
+            vertices.push_back({
                 { (x * caseSize.x) - halfWorld.x, -height, (y * caseSize.y) - halfWorld.y},
                 { color.x, color.y, color.z }
             });
@@ -37,18 +99,19 @@ Plane::Plane(glm::vec2 worldSize, glm::vec2 gridSize, glm::vec3 color, Interpret
     }
 
     //Generate indices
-    indices.reserve(gridSize.x * gridSize.y * 6);
-    for (std::uint32_t y = 0; y < gridSize.y; y++)
+    std::vector<std::uint32_t> indices;
+    indices.reserve(size.x * size.y * 6);
+    for (std::uint32_t y = 0; y < size.y; y++)
     {
-        for (std::uint32_t x = 0; x < gridSize.x; x++)
+        for (std::uint32_t x = 0; x < size.x; x++)
         {            
-            std::uint32_t xGrid = x + y * (gridSize.x + 1);
+            std::uint32_t xGrid = x + y * (size.x + 1);
             indices.push_back(xGrid);
-            indices.push_back(xGrid + gridSize.x + 1);
+            indices.push_back(xGrid + size.x + 1);
             indices.push_back(xGrid + 1);
 
-            indices.push_back(xGrid + gridSize.x + 1);
-            indices.push_back(xGrid + gridSize.x + 2);
+            indices.push_back(xGrid + size.x + 1);
+            indices.push_back(xGrid + size.x + 2);
             indices.push_back(xGrid + 1);
         }
     }
@@ -69,12 +132,12 @@ Plane::Plane(glm::vec2 worldSize, glm::vec2 gridSize, glm::vec3 color, Interpret
     glEnableVertexAttribArray(1);
     glVertexAttribPointer(0, 3, GL_FLOAT, false, 2 * sizeof(glm::vec3), (void*)0);
     glVertexAttribPointer(1, 3, GL_FLOAT, false, 2 * sizeof(glm::vec3), (void*)(sizeof(glm::vec3)));
+
+    delete[] heightMap;
 }
 
 void Plane::draw()
 {
     glBindVertexArray(m_vao);
-    glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_ebo);
     glDrawElements(GL_TRIANGLES, m_elementSize, GL_UNSIGNED_INT, 0);
 }

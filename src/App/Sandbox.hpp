@@ -35,6 +35,7 @@ private :
     Plane m_gridMesh;
     Plane m_functionMesh;
     float m_maxValue;
+    bool m_displayGrid;
     glm::vec3 m_gridColor;
 
     std::uint32_t m_fbo;
