@@ -25,8 +25,11 @@ Sandbox::Sandbox(GLFWwindow* window)
         { "Fill",      []() {glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); } },
         { "Points",    []() {glPolygonMode(GL_FRONT_AND_BACK, GL_POINT);} }
     };
-    m_currentMode = m_renderMode[0];
+    m_currentMode = m_renderMode[1];
     m_gridColor = glm::vec3(0, 1, 0);
+
+    m_drawMesh = true;
+    m_meshColor = glm::vec3(1, 1, 1);
 
     glEnable(GL_DEPTH_TEST);
     glViewport(0, 0, WIN_WIDTH, WIN_HEIGHT);
@@ -95,9 +98,21 @@ void Sandbox::render()
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     if (m_displayGrid)
     {
+        m_shader.setBool("isMeshFunction", false);
         m_gridMesh.draw();
     }
+
+    if (m_currentMode.name != "Points")
+    {
+        m_shader.setBool("isMeshFunction", m_drawMesh);
+        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+        m_functionMesh.draw();
+    }
+    
+    m_currentMode.setRenderMode();
+    m_shader.setBool("isMeshFunction", false);
     m_functionMesh.draw();
+
     
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -179,6 +194,7 @@ void Sandbox::render()
         ImGui::Checkbox("Display Grid", &m_displayGrid);
         ImGui::DragFloat("Camera height", &m_camera.offsetOrigin.y);
         ImGui::ColorEdit3("Grid color", &m_gridColor[0]);
+        ImGui::SameLine();
         if (ImGui::Button("Apply"))
         {
             m_gridMesh = Plane(
@@ -187,6 +203,10 @@ void Sandbox::render()
                 nullptr
             );
         }  
+
+        ImGui::Checkbox("Draw function mesh", &m_drawMesh);
+        ImGui::ColorEdit3("function mesh color", &m_meshColor[0]);
+        m_shader.setVec3("meshColor", m_meshColor);
     ImGui::End();
 
     ImGui::Begin("Render");  

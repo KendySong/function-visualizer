@@ -35,7 +35,8 @@ private :
     
     Plane m_gridMesh;
     Plane m_functionMesh;
-
+    bool m_drawMesh;
+    glm::vec3 m_meshColor;
 
     float m_maxValue;
     bool m_displayGrid;

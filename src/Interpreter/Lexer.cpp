@@ -45,7 +45,7 @@ Lexer::Lexer(std::string expression)
 			break;
 
 		default:
-			if (expression[i] == 'x' || expression[i] == 'y')
+			if (expression[i] == 'x' || expression[i] == 'y' || expression[i] == 'e')
 			{
 				std::string variable;
 				variable += expression[i];

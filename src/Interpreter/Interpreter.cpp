@@ -9,6 +9,7 @@ Interpreter::Interpreter(std::vector<std::pair<Token, std::string>>& tokens)
 
 	m_tokenIndex = 0;
 	m_currentToken = m_tokens[m_tokenIndex];
+	m_variables["e"] = std::exp(1.0);
 }
 
 void Interpreter::setVariable(float x, float y)
@@ -170,6 +171,12 @@ float Interpreter::value()
 		{
 			this->advanceToken();
 			float input = this->value();
+			return log10(input);
+		}
+		else if (m_currentToken.second == "ln")
+		{
+			this->advanceToken();
+			float input = this->value();
 			return log(input);
 		}
 		else if (m_currentToken.second == "abs")
@@ -177,7 +184,7 @@ float Interpreter::value()
 			this->advanceToken();
 			float input = this->value();
 			return abs(input);
-		}
+		}	
 		else
 		{
 			this->errors.push_back("[ERROR] Function unknowm " + m_currentToken.second + '\n');
