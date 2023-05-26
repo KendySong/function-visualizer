@@ -11,13 +11,13 @@
 
 ## Examples
 ### (x^2 + y^2)/20<br/>
-<img src="https://github.com/KendySong/function-visualizer/blob/master/screenshots/0.png">
+<img src="https://github.com/KendySong/function-visualizer/blob/main/screenshots/0.png">
 
 ### (x^2/5^2) - (y^2/5^2)<br/>
-<img src="https://github.com/KendySong/function-visualizer/blob/master/screenshots/1.png">
+<img src="https://github.com/KendySong/function-visualizer/blob/main/screenshots/1.png">
 
 ### 1-abs(x+y)-abs(y-x)<br/>
-<img src="https://github.com/KendySong/function-visualizer/blob/master/screenshots/2.png">
+<img src="https://github.com/KendySong/function-visualizer/blob/main/screenshots/2.png">
 
 ### cos(abs(x)+abs(y)) <br/>
-<img src="https://github.com/KendySong/function-visualizer/blob/master/screenshots/3.png">
+<img src="https://github.com/KendySong/function-visualizer/blob/main/screenshots/3.png">
