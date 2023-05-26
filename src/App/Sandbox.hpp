@@ -28,23 +28,26 @@ private :
     Timer m_framerateTimer;
 
     std::vector<RenderMode> m_renderMode;
-    std::string m_currentMode;
+    RenderMode m_currentMode;
 
-    OrbitCamera m_camera;
     Shader m_shader;
+    OrbitCamera m_camera;
+    
     Plane m_gridMesh;
     Plane m_functionMesh;
+
+
     float m_maxValue;
     bool m_displayGrid;
     glm::vec3 m_gridColor;
 
     std::uint32_t m_fbo;
     std::uint32_t m_rbo;
-    std::uint32_t m_frameTexture;
     ImVec2 m_imageCorner;
-
-    std::string m_logs;
+    std::uint32_t m_frameTexture;
+    
     bool m_autoScroll;
+    std::string m_logs;
     std::uint32_t m_logLine;
    
     GLFWwindow* p_window;

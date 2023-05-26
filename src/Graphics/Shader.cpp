@@ -82,6 +82,11 @@ void Shader::setFloat(const char* name, float value)
 	glUniform1f(glGetUniformLocation(m_program, name), value);
 }
 
+void Shader::setBool(const char* name, bool value)
+{
+	glUniform1i(glGetUniformLocation(m_program, name), value);
+}
+
 std::uint32_t Shader::getProgram() noexcept
 {
 	return m_program;

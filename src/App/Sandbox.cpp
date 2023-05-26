@@ -25,7 +25,7 @@ Sandbox::Sandbox(GLFWwindow* window)
         { "Fill",      []() {glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); } },
         { "Points",    []() {glPolygonMode(GL_FRONT_AND_BACK, GL_POINT);} }
     };
-    m_currentMode = m_renderMode[0].name;
+    m_currentMode = m_renderMode[0];
     m_gridColor = glm::vec3(0, 1, 0);
 
     glEnable(GL_DEPTH_TEST);
@@ -164,13 +164,13 @@ void Sandbox::render()
     ImGui::End();
 
     ImGui::Begin("Graphics");
-        if (ImGui::BeginCombo("Rendering mode", m_currentMode.c_str()))
+        if (ImGui::BeginCombo("Rendering mode", m_currentMode.name.c_str()))
         {
             for (size_t i = 0; i < m_renderMode.size(); i++)
             {
-                if (ImGui::Selectable(m_renderMode[i].name.c_str(), m_renderMode[i].name == m_currentMode))
+                if (ImGui::Selectable(m_renderMode[i].name.c_str(), m_renderMode[i].name == m_currentMode.name))
                 {
-                    m_currentMode = m_renderMode[i].name;
+                    m_currentMode = m_renderMode[i];
                     m_renderMode[i].setRenderMode();
                 }
             }
