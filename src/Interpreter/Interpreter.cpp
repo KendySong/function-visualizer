@@ -1,3 +1,4 @@
+#define _USE_MATH_DEFINES
 #include <cmath>
 
 #include "Interpreter.hpp"
@@ -185,6 +186,11 @@ float Interpreter::value()
 			float input = this->value();
 			return abs(input);
 		}	
+		else if (m_currentToken.second == "pi")
+		{
+			this->advanceToken();
+			return M_PI;
+		}
 		else
 		{
 			this->errors.push_back("[ERROR] Function unknowm " + m_currentToken.second + '\n');
