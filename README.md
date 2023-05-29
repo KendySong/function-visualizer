@@ -22,6 +22,7 @@
 <img src="https://github.com/KendySong/function-visualizer/blob/main/screenshots/3.png">
 
 ## Interpreter features
+- Pi
 - Euler constant
 - cos
 - sin
