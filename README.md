@@ -1,5 +1,5 @@
 # function-visualizer
-3D function interpreter and visualizer with OpenGL
+2 variables function interpreter and visualizer. $f(x, y) = z$
 
 ## Building
 ```git
@@ -9,16 +9,16 @@
 ```
 
 ## Examples
-### (x^2 + y^2)/20<br/>
+$$z = {(x^2 + y^2) \over 20} $$
 <img src="https://github.com/KendySong/function-visualizer/blob/main/screenshots/0.png">
 
-### (x^2/5^2) - (y^2/5^2)<br/>
+$$z = { x^2 \over 25 } - { y^2\over 25 } $$
 <img src="https://github.com/KendySong/function-visualizer/blob/main/screenshots/1.png">
 
-### 1-abs(x+y)-abs(y-x)<br/>
+$$z = {1-abs(x + y) - abs(y-x)}$$
 <img src="https://github.com/KendySong/function-visualizer/blob/main/screenshots/2.png">
 
-### cos(abs(x)+abs(y)) <br/>
+$$z = {cos(abs(x)+abs(y))}$$
 <img src="https://github.com/KendySong/function-visualizer/blob/main/screenshots/3.png">
 
 ## Interpreter features
