@@ -10,7 +10,7 @@ class Plane
 {
 public :
     Plane() = default;
-    Plane(glm::vec2 size, glm::vec3 color, Interpreter* interpreter);
+    Plane(glm::vec2 size, glm::vec3 color, Interpreter* interpreter, glm::vec2 offset = glm::vec2(0, 0));
     void draw(); 
 
 private :

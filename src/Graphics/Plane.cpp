@@ -6,7 +6,7 @@
 #include "../App/Log.hpp"
 #include <iostream>
 
-Plane::Plane(glm::vec2 size, glm::vec3 color, Interpreter* interpreter)
+Plane::Plane(glm::vec2 size, glm::vec3 color, Interpreter* interpreter, glm::vec2 offset)
 {
     float heighestPoint = 0;
     float middlePoint = 0;
@@ -30,7 +30,7 @@ Plane::Plane(glm::vec2 size, glm::vec3 color, Interpreter* interpreter)
             for (size_t x = 0; x <= size.x; x++)
             {
                 interpreter->reset();
-                interpreter->setVariable(input.x + x, input.y + y);
+                interpreter->setVariable(input.x + x + offset.x, input.y + y + offset.y);
                 float height = interpreter->interpretAST();
                 if (height > heighestPoint)
                 {

@@ -30,6 +30,7 @@ Sandbox::Sandbox(GLFWwindow* window)
 
     m_drawMesh = true;
     m_meshColor = glm::vec3(1, 1, 1);
+    m_gridOffset = glm::vec2(0, 0);
 
     glEnable(GL_DEPTH_TEST);
     glViewport(0, 0, WIN_WIDTH, WIN_HEIGHT);
@@ -111,9 +112,7 @@ void Sandbox::render()
     
     m_currentMode.setRenderMode();
     m_shader.setBool("isMeshFunction", false);
-    m_functionMesh.draw();
-
-    
+    m_functionMesh.draw(); 
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
     ImGui::BeginMainMenuBar();
@@ -127,6 +126,7 @@ void Sandbox::render()
     ImGui::DragFloat("Max value", &m_maxValue, 0.01, 0, std::numeric_limits<float>::max());
     ImGui::DragFloat("Zoom", &m_camera.distance, 1, 0, std::numeric_limits<float>::max());
     ImGui::DragFloat2("Graph size", &planeSize[0], 0.1);
+    ImGui::DragFloat2("Grid offset", &m_gridOffset[0], 0.1);
     
     m_shader.setFloat("maxFunctionOut", m_maxValue);
     if (ImGui::Button("Apply"))
@@ -148,7 +148,8 @@ void Sandbox::render()
             m_functionMesh = Plane(
                 glm::vec2(planeSize[0], planeSize[1]),
                 m_gridColor,
-                &interpreter
+                &interpreter,
+                m_gridOffset
             );
 
             m_logLine = interpreter.errors.size();
