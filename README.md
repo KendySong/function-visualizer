@@ -23,7 +23,7 @@ $$z = { x^2 \over 25 } - { y^2\over 25 } $$
 
 $$z = {1-abs(x + y) - abs(y-x)}$$
 ```git
-(x^2/25) - (y^2/25)
+1 - abs(x+y) - abs(y-x)
 ```
 <img src="https://github.com/KendySong/function-visualizer/blob/main/screenshots/2.png">
 
